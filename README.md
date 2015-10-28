@@ -97,6 +97,12 @@ TAP uses proxychains4 (proxychains-ng) to tunnel all of your http/https traffic 
 helps with content/egress filtering so you can ensure you always have everything up-to-date. In order to use proxychains, 
 just type proxychains4 <command_you_want_to_use> - TAP updates automatically use this.
 
+# Logging
+
+TAP during the setup process will prompt you to see if you want to log all commands executed on the system. If you do, 
+all commands that are entered on the system will be logged so that you can provide to the customer or keep records of 
+what happened on the devices. All logs are saved under /var/log/messages.
+
 # Supported Operating Systems
 
 Ubuntu 14.04 LTS (should work fine on debian and other ubuntu versions)
