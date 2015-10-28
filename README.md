@@ -46,7 +46,7 @@ https://websiteurl/commands.txt
 
 TAP will check that path every two minutes looking for new commands, note that this next part is IMPORTANT. The first line of the text file
 MUST contain "EXECUTE COMMAND" (without the double quotes). Once TAP identifies this, it will check to see if the command was executed before
-and if not it will execute the commands line by line. This is useful when you loose connection with TAP and need to call execute commands to
+and if not it will execute the commands line by line. This is useful when you lose connection with TAP and need to call execute commands to
 fix it.
 
 Once you run setup, it will install the files in /usr/share/tap. It will automatically start if you specify, and will automatically
@@ -60,7 +60,7 @@ In the event that you decide not to use SSH keys and use passwords, the config s
 to update the password, go to the scripts directory which has an update-password script to update the encrypted password and create a new dynamic
 cipher key.
 
-Also a neat trick once you are there is a small tool we wrote for basically an SSH VPN. This works out great if you aren't
+Also a neat trick once you are there is a small tool we wrote for basically a SSH VPN. This works out great if you aren't
 doing large traffic volumes such as port scans, vulnerability scans, etc. The below is a simple tool that wraps sshuttle to create
 the VPN. Just save the below file into a python file and run and use the commands. It'll VPN you in to the remote network where
 TAP is deployed. You can do anything such as long as it isn't extremely large volume traffic (pretty stable).
