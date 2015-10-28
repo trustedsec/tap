@@ -1,0 +1,182 @@
+# CHANGELOG for TAP
+
+~~~~~~~~~~~~~~~
+version 1.0
+~~~~~~~~~~~~~~~
+
+* code cleanup
+* added automatic TAP background for TS Logo
+* fixed codebase to support proxychains-ng
+* added automatic checkout of PTF
+* added automatic install of git
+* added automatic update
+* fixed proxy chain updates through proxychain4
+* fixed setup install for starting tap
+* removed prompt for auto update if no was selected
+ 
+~~~~~~~~~~~~~~~
+version 0.8.2
+~~~~~~~~~~~~~~~
+
+* Added automatic ssh server install with permit root login to yes
+* Moved off Kali Linux to more Ubuntu standard
+
+~~~~~~~~~~~~~~~
+version 0.8.1
+~~~~~~~~~~~~~~~
+
+* removed check_keepalive() from TAP startup routine. This was causing an SSH configuration issue on newer versions of OpenSSH - need to investigate more.
+* added better error handling for SOCKS_PROXY if not in the configuration file appropriately
+
+~~~~~~~~~~~~~~~
+version 0.8
+~~~~~~~~~~~~~~~
+
+* changed SSH time interval check from 10 seconds to 60 seconds
+* changed initial SSH stale connect (first time) to 40 seconds
+* added process kill for heartbeat upon uninstall
+* created centralized kill_tap() function
+* added ssh heartbeat detection and changed timing to 20 seconds
+
+~~~~~~~~~~~~~~~
+version 0.7
+~~~~~~~~~~~~~~~
+
+* gutted out all of the openvpn code, switched to a full native SSH VPN located under scripts/
+* added Geoff's SSH VPN script into the scripts folder
+* fixed a bug that would cause SSH to not properly work when using password prompts (needed to add a expect password first)
+* added ssh_vpn() function that checks to ensure point-to-point is enabled on the remote TAP machine to allow a VPN tunnel
+* added better detection of SSH functionality 
+* removed openvpn configuration options inside initial setup
+* added automatic deployment of proxychains and proxychains config in order to tunnel all http traffic over the SSH tunnel for automatic updates
+
+~~~~~~~~~~~~~~~
+version 0.6.2
+~~~~~~~~~~~~~~~
+
+* added better handling for SSH connections and keep alives
+* added a check for a weird bug where SSH will log in sometimes and not others
+
+~~~~~~~~~~~~~~~
+version 0.6.1
+~~~~~~~~~~~~~~~
+
+* added /etc/init.d/ssh and /etc/init.d/openvpnas as normal start options for TAP - there was an issue where openvpnas would not start properly if not powered down right this fixes it
+* added getpass.getpass for all password fields so they are not displayed when entering a password during initial setup
+* removed /etc/init.d/tap from not being replaced during new installs - it would keep the old if already there
+* added update to initial tap start to ensure its pushing the latest startup scripts
+* added better redundancy and checking for openvpn
+
+~~~~~~~~~~~~~~~
+version 0.6
+~~~~~~~~~~~~~~~
+
+* restructured tap so it uses a heartbeat instead of launching TAP directly, this is incase it messes up, we can still pull updates from our update server to correct it
+* added new update.py and removed tap_update() to keep functions independant
+* added new option to specify customer name then deploying setup, will automatically update MOTD for you
+* updated so tap background will automatically update upon login screen as well
+* changed setup to call /etc/init.d/tap instead of python /usr/share/tap/tap.py
+* fixed a loop issue when no update server was specified
+* added dynamic port checking for openvpn - if openvpn is installed on a different port, it will automatically detect and tunnel that port over
+
+~~~~~~~~~~~~~~~
+version 0.5.2
+~~~~~~~~~~~~~~~
+
+* added a check in TAP initial setup to ensure it uploads the SSH keys correctly and tests for invalid passwords
+
+~~~~~~~~~~~~~~~
+version 0.5.1
+~~~~~~~~~~~~~~~
+* added ability to automatically log all commands running through SSH and pipe to /var/log/messages
+* fixed a typo on oschidr to os.chdir
+
+~~~~~~~~~~~~~~
+version 0.5
+~~~~~~~~~~~~~~
+
+* changed MOTD to reflect TAP - Powered by TrustedSec
+
+~~~~~~~~~~~~~~
+version 0.4.2
+~~~~~~~~~~~~~~
+
+* added better handling on execute commands
+* couple other minor bug fixes
+
+~~~~~~~~~~~~~~
+version 0.4.1
+~~~~~~~~~~~~~~
+
+* Added the creation of /home/openvpn if its not there
+* Fixed os version detection on 64/32 bit when running install of openvpn
+
+~~~~~~~~~~~~~~
+version 0.4
+~~~~~~~~~~~~~~
+
+* major rewrite, added OpenVPN in setup - can now use the pay version of OpenVPN if you want it
+* added OpenVPN automatic installer and iptables to protect ports made by OpenVPN
+* added more port restrictions on iptables to include ssh
+* added check for openvpn established connections
+* added better check for SSH reverse tunnel, now queries remote server checking if ports are active
+* redid the port checker to incorporate pexpect and handle multiple outages with SSH and OpenVPN
+* added better init.d script making it more compliant and start/restart/stop functionality
+
+~~~~~~~~~~~~~~
+version 0.3
+~~~~~~~~~~~~~~
+
+* added ability to use SSH keys instead of password, it now flags for both options
+* added automatic upload to authorized keys on remote server once keys have been generated
+* added new config options for ssh keys to automatically detect if SSH keys are in use
+* cleaned up static keys if already generated
+* added additional check to rename the host when created during initial setup
+* added better handling around fail-safe detection
+* added options to determine if password or keys were being selected when initializing SSH
+* added ability to specify hostname and hostname check when adding remote key
+
+~~~~~~~~~~~~~~
+version 0.2.2
+~~~~~~~~~~~~~~
+
+* added better description setup on setup.py installation
+* reworked a lot of the setup configuration to have better error detection and input validation
+* added new AUTO_UPDATE feature to turn on or off auto update
+* added check in tapcore to check for auto-update configuration
+* added a check in tap.py looking for config options
+* added robust error handling if SSH tunnel fails
+* added better handling if update server couldnt be contacted
+
+~~~~~~~~~~~~~~
+version 0.2.1
+~~~~~~~~~~~~~~
+
+* added a check to see if path was created, if not create it when not using update always mode
+
+~~~~~~~~~~~~~~
+version 0.2
+~~~~~~~~~~~~~~
+
+* Added new option in config menu - allow you to specify own update server
+* Added new option in config menu - allow commands to be run from remote server
+* Added entire config rewrite for Kali if package repositories are missing when adding bleeding edge initially - want to ensure all main repos are there
+* Fixed the update script to include hashing to ensure commands don't get updated over and over and over again.
+* Added a better check handling for when updating TAP
+* Added AES encryption for password storage in config - note that this is a static key. It is not using best practices to PKI. Will be working on a better solution later on
+* Added better tutorial on the README on installing TAP and using it
+
+~~~~~~~~~~~~~~
+version 0.1
+~~~~~~~~~~~~~~
+
+* ensured /etc/init.d/ssh starts no matter what
+* added install openssh-server
+* added check to see if dsa certs were created
+* added keepalive check
+
+~~~~~~~~~~~~~~
+version 0.0.1
+~~~~~~~~~~~~~~
+
+* initial release
