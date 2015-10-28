@@ -170,24 +170,24 @@ if answer.lower() == "y" or answer.lower() == "yes":
 
                 print "[*] Next we need to configure the remote SSH server you will want to tunnel over."
                 print "[*] This is the main remote SSH server you have running on the Internet that TAP will call back to."
-                print "\nWe need to figure out which method you want to use. The first method will use SSH keys\nfor authentication (preferred). This will generate a pub/priv key pair on your machine\nand automatically upload the key to the remote server. When that happens, a password\nwill not be needed then. The second method will use an actual password for authentication\non the remote server. The password is encrypted with AES but not in a secure format at the\nmoment.\n\n"
+                print "\nWe need to figure out which method you want to use. The first method will use SSH keys\nfor authentication (preferred). This will generate a pub/priv key pair on your machine\nand automatically upload the key to the remote server. When that happens, a password\nwill not be needed then. The second method will use an actual password for authentication\non the remote server. The password is encrypted with AES but not in a secure format (decryption keys are stored locally, need to be).\n\n"
                 choice1 = raw_input("Choice 1: Use SSH keys, Choice 2: Use password (1,2)[1]: ")
                 if choice1 == "1" or choice1 == "":
                     choice1 = "ssh_keys"
                 else:
                     choice1 = "password"
 
+                # generate ssh_key gen from setcore
+                if choice1 == "ssh_keys":
+                    print "[*] SSH Key generation was selected, we will begin the process now."
+                    password = getpass.getpass("Enter the passphrase for your new SSH key: ")
+                    ssh_keygen(password)
+
                 # if we are just using straight passwords
                 print "[*] This will ask for a username on the REMOTE system (root not recommended)"
 		print "The username and password being requested would be the username and password needed to log into the REMOTE system that you have exposed on the Internet for the reverse SSH connection. For example, the TAP box needs to connect OUTBOUND to a box on the Internet - this would be the username and password for that system. ROOT access is NOT needed. This is a simple SSH tunnel. Recommend restricted account in case this box gets taken and has creds on it. Better preference is to use SSH keys."
                 username = raw_input("Enter username for ssh [root]: ")
                 if username == "": username = "root"
-
-                # generate ssh_key gen from setcore
-                if choice1 == "ssh_keys":
-                    print "[*] SSH Key generation was selected, we will begin the process now."
-                    password = getpass.getpass("Enter the passphrase for the key: ")
-                    ssh_keygen(password)
 
                 else:                
                     password = getpass.getpass("Enter password for %s: " % (username))
