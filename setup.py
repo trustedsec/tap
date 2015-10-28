@@ -38,25 +38,19 @@ def kill_tap():
 
 # here we encrypt via aes, will return encrypted string based on secret key which is random
 def encryptAES(data):
-
     # the character used for padding--with a block cipher such as AES, the value
     # you encrypt must be a multiple of BLOCK_SIZE in length.  This character is
     # used to ensure that your value is always a multiple of BLOCK_SIZE
     PADDING = '{'
-
     BLOCK_SIZE = 32
-
     # one-liner to sufficiently pad the text to be encrypted
     pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
-
     # random value here to randomize builds
     a = 50 * 5
-
     # one-liners to encrypt/encode and decrypt/decode a string
     # encrypt with AES, encode with base64
     EncodeAES = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
     DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
-
     secret = os.urandom(BLOCK_SIZE)
     cipher = AES.new(secret)
     secret = base64.b64encode(secret)
@@ -139,7 +133,8 @@ if answer.lower() == "y" or answer.lower() == "yes":
 		# install git and update everything
 		print "[*] Updating everything beforehand..."
 		subprocess.Popen("apt-get update && apt-get --force-yes -y upgrade && apt-get --force-yes -y dist-upgrade", shell=True).wait()
-		subprocess.Popen("apt-get --force-yes -y install git python-crypto", shell=True).wait()
+		subprocess.Popen("apt-get --force-yes -y install git python-crypto python-pexpect", shell=True).wait()
+		from Crypto.Cipher import AES
                 choice = raw_input("Do you want to keep TAP updated? (requires internet) [y/n]: ")
                 if choice == "y" or choice == "yes":
                         print "[*] Checking out latest TAP to /usr/share/tap"
@@ -220,7 +215,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
                 socks = raw_input("Enter the LOCAL port that will be used for the SOCKS HTTP proxy [10004]: ")
                 if localport == "": localport = "10003"
                 if socks == "": socks = "10004"
-		if AUTO_UPDATE == "ON"
+		if AUTO_UPDATE == "ON":
 			print "[*] The update server is a path to pull NEW versions of the TAP device. Using git isn't recommended if you customize your builds for your TAP devices. By default this will pull from git pull https://github.com/trustedsec/tap - recommended you change this."
 			print "[*] For this field - you want to put every command you would run if you aren't using git, for example - wget https://yourcompany.com/tap.tar.gz;tar -zxvf tap.tar.gz"
 	                updates = raw_input("Enter the commands for your update server [trustedsec (default)]: ")
@@ -339,7 +334,17 @@ if answer.lower() == "y" or answer.lower() == "yes":
 			subprocess.Popen("/etc/init.d/tap start", shell=True).wait()
 
 		print "[*] All finished, now run the following command to install all of your tools: " 
-		print "[*] cd /pentest/ptf, ./ptf, use modules/install_update_all"
+		ptf = raw_input("[-] Do you want to install all PTF modules now? [yes][no]: ")
+		if ptf == "yes" or ptf == "y":
+			print "[*] Installing PTF modules/install_update_all..."
+			os.chdir("/pentest/ptf")
+			child = pexpect.spawn("python ptf")
+			child.expect("ptf")
+			child.sendline("use modules/install_update_all")
+			child.interact()
+		
+		else:
+			print "[*] cd /pentest/ptf, ./ptf, use modules/install_update_all"
 
 # uninstall tap
 if answer == "uninstall":

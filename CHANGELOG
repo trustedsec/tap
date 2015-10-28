@@ -1,6 +1,15 @@
 # CHANGELOG for TAP
 
 ~~~~~~~~~~~~~~~
+version 1.1
+~~~~~~~~~~~~~~~
+
+* fixed update password calling old core files
+* added python-pexpect automatic install
+* fixed pycrypto not being found - added after install
+* added automatic install of PTF
+
+~~~~~~~~~~~~~~~
 version 1.0
 ~~~~~~~~~~~~~~~
 

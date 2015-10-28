@@ -1,7 +1,7 @@
 import os,sys
-if not os.path.isfile("tardis.py"):
+if not os.path.isfile("tap.py"):
     sys.path.append("../")
-from src.core.tardiscore import *
+from src.core.tapcore import *
 print """
 This will update the encrypted password inside the TARDIS config.
 
