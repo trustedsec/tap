@@ -91,6 +91,11 @@ time.sleep(2)
 subprocess.Popen("ssh -f %s@%s -L %s:localhost:%s -N" % (reverse4, reverse1, reverse3, reverse2), shell=True).wait()
 subprocess.Popen("sshuttle --dns -vr %s@localhost:%s 0/0" % (reverse4,reverse3), shell=True).wait()
 
+# Using Proxy Chains
+
+TAP uses proxychains4 (proxychains-ng) to tunnel all of your http/https traffic through SSH to your remote box. This 
+helps with content/egress filtering so you can ensure you always have everything up-to-date. In order to use proxychains, 
+just type proxychains4 <command_you_want_to_use> - TAP updates automatically use this.
 
 # Supported Operating Systems
 
