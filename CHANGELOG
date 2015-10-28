@@ -13,6 +13,7 @@ version 1.0
 * fixed proxy chain updates through proxychain4
 * fixed setup install for starting tap
 * removed prompt for auto update if no was selected
+* added updates through git pull
  
 ~~~~~~~~~~~~~~~
 version 0.8.2

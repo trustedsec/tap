@@ -148,7 +148,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
                                 shutil.rmtree('/usr/share/tap')
                         if not os.path.isdir("/usr/share/tap"):
                             os.makedirs("/usr/share/tap")
-			subprocess.Popen("cd /usr/share/;git clone https://github.com/trustedsec/tap tap/;cd tap;git pull", shell=True).wait()
+			subprocess.Popen("cd /usr/share/;git clone https://github.com/trustedsec/tap tap/", shell=True).wait()
                         print "[*] Finished. If you want to update tap go to /usr/share/tap and type 'git pull'"
                         AUTO_UPDATE="ON"
                 else:
@@ -221,9 +221,10 @@ if answer.lower() == "y" or answer.lower() == "yes":
                 if localport == "": localport = "10003"
                 if socks == "": socks = "10004"
 		if AUTO_UPDATE == "ON"
-			print "[*] The update server is a path to pull NEW versions of the TAP device. Using git isn't recommended if you customize your builds for your TAP devices. By default this will pull from https://www.trustedsec.com/files/tap.tar.gz - recommended you change this."
-	                updates = raw_input("Enter the path for your update server [trustedsec (default)]: ")
-	                if updates == "": updates = "https://www.trustedsec.com/files/tap.tar.gz"
+			print "[*] The update server is a path to pull NEW versions of the TAP device. Using git isn't recommended if you customize your builds for your TAP devices. By default this will pull from git pull https://github.com/trustedsec/tap - recommended you change this."
+			print "[*] For this field - you want to put every command you would run if you aren't using git, for example - wget https://yourcompany.com/tap.tar.gz;tar -zxvf tap.tar.gz"
+	                updates = raw_input("Enter the commands for your update server [trustedsec (default)]: ")
+	                if updates == "": updates = "git pull"
 		else:
 			updates = ""
                 print """The next option allows you to specify a URL to execute commands.\nThis is used if you mess up and don't have reverse SSH access. Place a file in this location and TAP will execute the commands."""

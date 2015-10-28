@@ -151,17 +151,15 @@ def proxychain():
 def tap_update():
     auto_update = check_config("AUTO_UPDATE=")
     if auto_update == "ON":
-        print "[*] Updating TAP now with the latest TAP code from trustedsec.com/files/tap.tar.gz.."
+        print "[*] Updating TAP now with the latest TAP codebase"
         updates = check_config("UPDATE_SERVER=")
         if not os.path.isdir("/usr/share/tap"):
-            os.makedirs("/usr/share/tap")
-        os.chdir("/usr/share/")
-        download_file(updates)
-        subprocess.Popen("tar -zxvf tap.tar.gz;rm -rf tap.tar.gz", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
-        os.chdir("/usr/share/tap")
+	    subprocess.Popen("git clone https://github.com/trustedsec/tap", shell=True).wait()
+	os.chdir("/usr/share/tap")
+        subprocess.Popen(updates, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
 
     else:
-        print "[*] AUTO_UPDATE is turned to off - not updating. Manually update by downloading: https://www.trustedsec.com/files/tap.tar.gz"
+        print "[*] AUTO_UPDATE is turned to off - not updating. Manually update by downloading: git clone https://github.com/trustedsec/tap"
 
 # grab the normal path for config
 def check_config_path():
