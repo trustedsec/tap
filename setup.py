@@ -133,7 +133,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
 		# install git and update everything
 		print "[*] Updating everything beforehand..."
 		subprocess.Popen("apt-get update && apt-get --force-yes -y upgrade && apt-get --force-yes -y dist-upgrade", shell=True).wait()
-		subprocess.Popen("apt-get --force-yes -y install git python-crypto python-pexpect", shell=True).wait()
+		subprocess.Popen("apt-get --force-yes -y install git python-crypto python-pexpect openssh-server", shell=True).wait()
 		from Crypto.Cipher import AES
                 choice = raw_input("Do you want to keep TAP updated? (requires internet) [y/n]: ")
                 if choice == "y" or choice == "yes":
@@ -184,27 +184,28 @@ if answer.lower() == "y" or answer.lower() == "yes":
                     ssh_keygen(password)
 
                 # if we are just using straight passwords
-                print "[*] This will ask for a username on the REMOTE system (root not recommended)"
-		print "The username and password being requested would be the username and password needed to log into the REMOTE system that you have exposed on the Internet for the reverse SSH connection. For example, the TAP box needs to connect OUTBOUND to a box on the Internet - this would be the username and password for that system. ROOT access is NOT needed. This is a simple SSH tunnel. Recommend restricted account in case this box gets taken and has creds on it. Better preference is to use SSH keys."
-                username = raw_input("Enter username for ssh [root]: ")
-                if username == "": username = "root"
+		if choice1 == "password":
+	                print "[*] This will ask for a username on the REMOTE system (root not recommended)"
+			print "The username and password being requested would be the username and password needed to log into the REMOTE system that you have exposed on the Internet for the reverse SSH connection. For example, the TAP box needs to connect OUTBOUND to a box on the Internet - this would be the username and password for that system. ROOT access is NOT needed. This is a simple SSH tunnel. Recommend restricted account in case this box gets taken and has creds on it. Better preference is to use SSH keys."
+	                username = raw_input("Enter username for ssh [root]: ")
+	                if username == "": username = "root"
+	
+	                else:                
+	                    password = getpass.getpass("Enter password for %s: " % (username))
+	
+	                if password != "":
+	                    print "[*] Encrypting the password now.."
+	                    password = encryptAES(password) 
+	                    store = password.split("::::")
+	                    password = store[0]
+	                    key = store[1]
 
-                else:                
-                    password = getpass.getpass("Enter password for %s: " % (username))
-
-                if password != "":
-                    print "[*] Encrypting the password now.."
-                    password = encryptAES(password) 
-                    store = password.split("::::")
-                    password = store[0]
-                    key = store[1]
-
-                    # if the key directory isnt created, do it real quick
-                    if not os.path.isdir("/root/.tap"):
-                        os.makedirs("/root/.tap")
-                    filewrite = file("/root/.tap/store", "w")
-                    filewrite.write(key)
-                    filewrite.close()
+	                    # if the key directory isnt created, do it real quick
+	                    if not os.path.isdir("/root/.tap"):
+	                        os.makedirs("/root/.tap")
+	                    filewrite = file("/root/.tap/store", "w")
+	                    filewrite.write(key)
+	                    filewrite.close()
 
 		print "[!] Warning when specifying hostname - this implies that the remote TAP device will have DNS - otherwise this will fail."
                 host = raw_input("Enter the remote IP or hostname for SSH connect (remote external server): ")
@@ -235,11 +236,16 @@ if answer.lower() == "y" or answer.lower() == "yes":
                     if os.path.isfile("/root/.ssh/known_hosts"):
                         print "[!] Removing old known_hosts files.."                    
                         os.remove("/root/.ssh/known_hosts")
+
                     # pull public key into memory
+
                     fileopen = file("/root/.ssh/id_rsa.pub", "r")
                     pub = fileopen.read()
                     # spawn pexpect to add key
                     print "[*] Spawning SSH connection and modifying authorized hosts."
+		    print "[*] Below will ask for a username and password, this is for the REMOTE server exposed on the Internet. This is a one time thing where the TAP device will upload and add the SSH keys to the remote system in order to handle SSH authentication. This is the PW for your external server on the Internet."
+		    username = raw_input("Enter the username for the REMOTE account to log into the EXTERNAL server: ")
+		    if username == "": username = "root"
                     child = pexpect.spawn("ssh %s@%s -p %s" % (username,host,port))
                     child.expect("Are you sure you want to continue connecting")
                     child.sendline("yes")
@@ -315,7 +321,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
 
 		# enable root login
 		print "[*] Enabling SSH-Server and allow remote root login.. Please ensure and test this ahead of time."
-		subprocess.Popen("apt-get --force-yes -y install openssh-server", shell=True).wait()
+		# subprocess.Popen("apt-get --force-yes -y install openssh-server", shell=True).wait()
 		data = file("/etc/ssh/sshd_config", "r").read()
 		filewrite = file("/etc/ssh/sshd_config", "w")
 		data = data.replace("PermitRootLogin without-password", "PermitRootLogin yes")

@@ -412,14 +412,13 @@ def ssh_keygen(passphrase):
 
     # Enter file in which to save the key (/root/.ssh/id_rsa): 
     print "[*] Generating the keypair.."
+    passphrase = passphrase.rstrip()
     child = pexpect.spawn("ssh-keygen -t rsa -b 4096")
-    child.expect("Enter file in which to save the key")
+    child.expect("save the")
+    child.sendline("")
     print "[*] Saving the keys in the default location.."
-    # passphrase for the ssh keypair
-    print "[*] Sending initial passphrase specified.."
-    #    child.expect("Enter passphrase (empty for no passphrase): ")
-    child.sendline("\n" + passphrase)
-    child.expect("Enter same passphrase again:")
+    child.sendline(passphrase)
+    child.expect("passphrase")
     child.sendline(passphrase)
     print "[*] Created public/private pair in /root/.ssh/ - will use certificates now."
     child.sendline("ssh-add")
