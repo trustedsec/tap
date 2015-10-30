@@ -193,7 +193,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
 	                else:                
 	                    password = getpass.getpass("Enter password for %s: " % (username))
 	
-	                if password != "":
+		if password != "":
 	                    print "[*] Encrypting the password now.."
 	                    password = encryptAES(password) 
 	                    store = password.split("::::")

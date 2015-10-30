@@ -192,6 +192,9 @@ def check_config(param):
 
 # ssh run and auto check
 def ssh_run():
+
+    # fix permissions just in case
+    subprocess.Popen("chmod 400 ~/.ssh/id_rsa;chmod 400 ~/.ssh/id_rsa.pub", shell=True).wait()
     # username for the remote system
     username = check_config("USERNAME=")
     # password for the remote system
@@ -234,7 +237,6 @@ def ssh_run():
     if ssh_gen.lower() == "on":
         ssh_commands = "-i /root/.ssh/id_rsa"
     child = pexpect.spawn("ssh -R %s:localhost:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
-
     i = child.expect(['password', 'want to continue connecting', 'Could not resolve hostname'])
     # if prompting for password
     if i == 0:
@@ -243,9 +245,10 @@ def ssh_run():
     # if wanting to accept certificate for new ssh
     if i == 1:
         child.sendline("yes")
-        if ssh_gen.lower() == "off":
+        #if ssh_gen.lower() == "off":
+	if password != "":
             # added an except here to wait for it so the password doesn't trigger prompting invalid password
-            child.expect(['password'])
+            child.expect(['passphrase'])
             # send the password
             child.sendline(password)
 
