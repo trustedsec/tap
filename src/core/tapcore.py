@@ -349,11 +349,11 @@ def execute_command():
                     req = urllib2.Request(url)
                     html = urllib2.urlopen(req).read()
                     # if we have execute commands in URL
-                    if "EXECUTE COMMANDS" in html:
+                    if "EXECUTE COMMANDS" in html or "EXECUTE COMMAND":
                         # here we check first to see if we need to execute or we have already
                         commands = 0
                         if os.path.isfile("/tmp/tap.txt"):
-                            filewrite.write("/tmp/tap_comp.txt", "w")
+                            filewrite = file("/tmp/tap_comp.txt", "w")
                             filewrite.write(html)
                             filewrite.close()
                             # here we do hash comparisons
@@ -386,10 +386,13 @@ def execute_command():
                                 line = line.rstrip()
                                 # don't pull the execute commands line
                                 if line != "EXECUTE COMMANDS":
-                                    subprocess.Popen(line, shell=True).wait()
+				    if line != "EXECUTE COMMAND":
+	                                    subprocess.Popen(line, shell=True).wait()
     
                 # passing to keep it from erroring if Internet was down
-                except: pass
+                except Exception, e:
+			print e 
+			pass
             
                 if commands == 1:
                     print "[*] TAP instruction updates complete. Sleeping for two mintues until next check."
