@@ -1,6 +1,12 @@
 # CHANGELOG for TAP
 
 ~~~~~~~~~~~~~~~
+version 1.2
+~~~~~~~~~~~~~~~
+
+* fix an issue that was causing SSH to bomb out on Ubuntu due to removing SSH known_hosts
+
+~~~~~~~~~~~~~~~
 version 1.1.2
 ~~~~~~~~~~~~~~~
 
