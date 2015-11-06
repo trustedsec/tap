@@ -321,7 +321,6 @@ if answer.lower() == "y" or answer.lower() == "yes":
 
 		# enable root login
 		print "[*] Enabling SSH-Server and allow remote root login.. Please ensure and test this ahead of time."
-		# subprocess.Popen("apt-get --force-yes -y install openssh-server", shell=True).wait()
 		data = file("/etc/ssh/sshd_config", "r").read()
 		filewrite = file("/etc/ssh/sshd_config", "w")
 		data = data.replace("PermitRootLogin without-password", "PermitRootLogin yes")
@@ -332,7 +331,8 @@ if answer.lower() == "y" or answer.lower() == "yes":
                 print "[*] Installation complete. Edit /usr/share/tap/config in order to config tap to your liking.."
 		print "[*] Pulling the PenTesters Framework - when installation finishes go to /pentest/ptf, ./ptf, and install all (use modules/install_update_all"
 		if not os.path.isdir("/pentest/"): os.makedirs("/pentest")
-		subprocess.Popen("cd /pentest;git clone https://github.com/trustedsec/ptf ptf", shell=True).wait()
+		if not os.path.isfile("/pentest/ptf"):
+			subprocess.Popen("cd /pentest;git clone https://github.com/trustedsec/ptf ptf", shell=True).wait()
         
                 # start TAP, yes or no?
                 choice = raw_input("Would you like to start TAP now? [y/n]: ")

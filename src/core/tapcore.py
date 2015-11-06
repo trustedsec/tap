@@ -263,7 +263,6 @@ def ssh_run():
 
        # this is for SSH only
         print "[*] Fail-safe SSH is active.. Monitoring SSH connections. - All is well."
-        #subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         time.sleep(1)
         portcheck = pexpect.spawn('ssh -p %s %s %s@%s netstat -an | egrep "tcp.*:%s.*LISTEN"' % (port, ssh_commands, username, host, localport))
         i = portcheck.expect(['pass', 'want to continue connecting', localport])

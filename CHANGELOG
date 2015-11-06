@@ -5,6 +5,9 @@ version 1.2
 ~~~~~~~~~~~~~~~
 
 * fix an issue that was causing SSH to bomb out on Ubuntu due to removing SSH known_hosts
+* cleaned up code
+* cleaned up setup file
+* added check for cloning PTF is it isn't already there
 
 ~~~~~~~~~~~~~~~
 version 1.1.2
