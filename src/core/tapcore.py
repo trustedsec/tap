@@ -214,8 +214,18 @@ def ssh_run():
     # pull config for proxychains and modify
     proxychain()
  
-    # run ssh-add just in case the keys weren't added
-    subprocess.Popen("ssh-add", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    if ssh_gen.lower() == "on":
+        ssh_commands = "-i /root/.ssh/id_rsa"
+    try:
+	    child = pexpect.spawn("ssh-add")
+	    i = child.expect(['pass'])
+
+	    # if prompting for password
+	    if i == 0:
+	        child.sendline(password)
+   	        child.close()
+
+    except: pass
 
     # if we need to generate our keys
     ssh_gen = check_config("SSH_KEYS=")
