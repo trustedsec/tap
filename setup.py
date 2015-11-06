@@ -155,18 +155,6 @@ if answer.lower() == "y" or answer.lower() == "yes":
                             os.makedirs("/usr/share/tap")
                         subprocess.Popen("cp -rf * /usr/share/tap/", shell=True).wait()
        
-                hostname = raw_input("Do you want TAP to set this machines hostname for you - yes or no [y]: ")
-                if hostname == "y" or hostname == "yes":
-                    hostname = raw_input("Enter the name of the hostname for this machine: ")
-                    # modify /etc/hostname to specify hostname
-                    filewrite = file("/etc/hostname", "w")
-                    filewrite.write(hostname)
-                    filewrite.close()
-                    # set the hostname
-                    subprocess.Popen("hostname %s" % (hostname), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-                    print "[*] Done! Hostname is set.. Restarting network settings real quick to take effect.."
-                    subprocess.Popen("service networking restart", shell=True).wait()
-
 
                 print "[*] Next we need to configure the remote SSH server you will want to tunnel over."
                 print "[*] This is the main remote SSH server you have running on the Internet that TAP will call back to."
