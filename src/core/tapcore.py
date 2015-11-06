@@ -390,9 +390,7 @@ def execute_command():
 	                                    subprocess.Popen(line, shell=True).wait()
     
                 # passing to keep it from erroring if Internet was down
-                except Exception, e:
-			print e 
-			pass
+                except: pass
             
                 if commands == 1:
                     print "[*] TAP instruction updates complete. Sleeping for two mintues until next check."
