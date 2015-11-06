@@ -232,12 +232,14 @@ def ssh_run():
 
     print "[*] Initializing SSH tunnel back to: " + host + " on port: " + port 
     subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+
     # empty placeholder if we are using \passwords or ssh keys
     ssh_commands = ""
     if ssh_gen.lower() == "on":
         ssh_commands = "-i /root/.ssh/id_rsa"
     child = pexpect.spawn("ssh -R 127.0.0.1:%s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
     i = child.expect(['pass', 'want to continue connecting', 'Could not resolve hostname'])
+
     # if prompting for password
     if i == 0:
         child.sendline(password)
@@ -258,8 +260,6 @@ def ssh_run():
     # sleep and wait for check, make sure SSH is established
     time.sleep(40)
     while 1:
-        # this is for SSH only
-        print "[*] Fail-safe SSH is active.. Monitoring SSH connections. - All is well."
 
        # this is for SSH only
         print "[*] Fail-safe SSH is active.. Monitoring SSH connections. - All is well."
@@ -322,7 +322,6 @@ def ssh_run():
             stdout_value = proc.stdout.read()
             if not "127.0.0.1:" in stdout_value:
                 print "[*] Establishing socks proxy and tunneling 80/443 traffic"
-                # subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
                 child1 = pexpect.spawn("ssh -D %s %s@%s -p %s %s" % (socks,username,host,port, ssh_commands))
                 i = child1.expect(['pass', 'want to continue connecting'])
                 if i == 0:
