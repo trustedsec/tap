@@ -213,7 +213,8 @@ def ssh_run():
 
     # pull config for proxychains and modify
     proxychain()
- 
+    ssh_gen = check_config("SSH_KEYS=")
+    ssh_commands = ""
     if ssh_gen.lower() == "on":
         ssh_commands = "-i /root/.ssh/id_rsa"
     try:
@@ -228,7 +229,6 @@ def ssh_run():
     except: pass
 
     # if we need to generate our keys
-    ssh_gen = check_config("SSH_KEYS=")
     print "[*] Checking for stale SSH tunnels on the same port..."
     proc = subprocess.Popen("netstat -antp | grep ESTABLISHED | grep %s" % (port), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True) 
     stdout_value = proc.communicate()[0]
@@ -244,9 +244,6 @@ def ssh_run():
     subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
 
     # empty placeholder if we are using \passwords or ssh keys
-    ssh_commands = ""
-    if ssh_gen.lower() == "on":
-        ssh_commands = "-i /root/.ssh/id_rsa"
     child = pexpect.spawn("ssh -R 127.0.0.1:%s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
     i = child.expect(['pass', 'want to continue connecting', 'Could not resolve hostname'])
 
