@@ -8,8 +8,8 @@ import base64
 from src.core.tapcore import ssh_keygen
 from src.core.tapcore import motd
 from src.core.tapcore import set_background
-import pexpect
 import getpass
+import pexpect
 
 def kill_tap():
     proc = subprocess.Popen("ps -au | grep tap", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -168,7 +168,8 @@ if answer.lower() == "y" or answer.lower() == "yes":
                 # generate ssh_key gen from setcore
                 if choice1 == "ssh_keys":
                     print "[*] SSH Key generation was selected, we will begin the process now."
-                    password = getpass.getpass("Enter the passphrase for your new SSH key: ")
+                    #password = getpass.getpass("Enter the passphrase for your new SSH key: ")
+		    password = ""
                     ssh_keygen(password)
 
                 # if we are just using straight passwords
@@ -235,10 +236,15 @@ if answer.lower() == "y" or answer.lower() == "yes":
 		    username = raw_input("Enter the username for the REMOTE account to log into the EXTERNAL server: ")
 		    if username == "": username = "root"
                     child = pexpect.spawn("ssh %s@%s -p %s" % (username,host,port))
-                    child.expect("Are you sure you want to continue connecting")
-                    child.sendline("yes")
                     password_onetime = getpass.getpass("Enter your password for the remote SSH server: ")
-                    child.sendline(password_onetime)
+                    i = child.expect(['The authenticity of host', 'password'])
+		    if i == 0:
+	                    child.sendline("yes")
+			    child.expect("password")
+			    child.sendline(password_onetime)
+		    else:
+			child.sendline(password_onetime)
+
                     # here we need to verify that we actually log in with the right password
                     i = child.expect(['Permission denied, please try again.', 'Last login:'])
                     if i == 0:

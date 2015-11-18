@@ -1,6 +1,15 @@
 # CHANGELOG for TAP
 
 ~~~~~~~~~~~~~~~
+version 1.3
+~~~~~~~~~~~~~~~
+
+* simplified initial install 
+* fixed an issue that would cause the setup to hang when uploading keys to the SSH server
+* fixed an issue that would cause password prompts when locking keystores to a password
+* added better error handling around exceptions
+
+~~~~~~~~~~~~~~~
 version 1.2
 ~~~~~~~~~~~~~~~
 
