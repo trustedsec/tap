@@ -280,7 +280,10 @@ def ssh_run():
         # if wanting to accept certificate for new ssh
         if i == 1:
             portcheck.sendline("yes")
-            if ssh_gen.lower() == "off":
+            #if ssh_gen.lower() == "off":
+
+        #if ssh_gen.lower() == "off":
+	    if password != "":
                 portcheck.expect("password")
                 portcheck.sendline(password)
 
@@ -311,7 +314,8 @@ def ssh_run():
 
             if i == 1:
                 child.sendline("yes")
-                if ssh_gen.lower() == "off":
+                #if ssh_gen.lower() == "off":
+                if password != "":
                     child.expect("pass")
                     child.sendline(password)
                 time.sleep(10)
@@ -334,9 +338,12 @@ def ssh_run():
                     child1.sendline(password)
                 if i == 1:
                     child1.sendline("yes")
-                    if ssh_gen.lower() == "off":
-                        child1.expect("pass")
-                        child1.sendline(password)
+                    #if ssh_gen.lower() == "off":
+		    if password != "":
+			try:
+	                        child1.expect("pass")
+	                        child1.sendline(password)
+			except: pass
                     time.sleep(20)
 
         # wait and sleep
