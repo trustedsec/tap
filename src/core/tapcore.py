@@ -60,29 +60,33 @@ def encryptAES(data):
 
 # here we encrypt via aes, will return encrypted string based on secret key which is random
 def decryptAES(data):
+    
+    if os.path.isfile("/root/.tap/store"):
 
-    # the character used for padding--with a block cipher such as AES, the value
-    # you encrypt must be a multiple of BLOCK_SIZE in length.  This character is
-    # used to ensure that your value is always a multiple of BLOCK_SIZE
-    PADDING = '{'
+    	# the character used for padding--with a block cipher such as AES, the value
+    	# you encrypt must be a multiple of BLOCK_SIZE in length.  This character is
+    	# used to ensure that your value is always a multiple of BLOCK_SIZE
+    	PADDING = '{'
+	
+	    BLOCK_SIZE = 32
+	
+	    # one-liner to sufficiently pad the text to be encrypted
+	    pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
+	
+	    # random value here to randomize builds
+	    a = 50 * 5
+	
+	    # one-liners to encrypt/encode and decrypt/decode a string
+	    # encrypt with AES, encode with base64
+	    DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
+	    fileopen = file("/root/.tap/store", "r")
+	    key = fileopen.read()
+	    secret = base64.b64decode(key)
+	    cipher = AES.new(secret)
+	    aes = DecodeAES(cipher, data)
+	    return str(aes)
 
-    BLOCK_SIZE = 32
-
-    # one-liner to sufficiently pad the text to be encrypted
-    pad = lambda s: s + (BLOCK_SIZE - len(s) % BLOCK_SIZE) * PADDING
-
-    # random value here to randomize builds
-    a = 50 * 5
-
-    # one-liners to encrypt/encode and decrypt/decode a string
-    # encrypt with AES, encode with base64
-    DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
-    fileopen = file("/root/.tap/store", "r")
-    key = fileopen.read()
-    secret = base64.b64decode(key)
-    cipher = AES.new(secret)
-    aes = DecodeAES(cipher, data)
-    return str(aes)
+    else: return ""
 
 # quick check to see if we are running ubuntu-linux
 def check_debian():
