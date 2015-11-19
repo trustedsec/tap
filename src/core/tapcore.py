@@ -63,10 +63,10 @@ def decryptAES(data):
     
     if os.path.isfile("/root/.tap/store"):
 
-    	# the character used for padding--with a block cipher such as AES, the value
-    	# you encrypt must be a multiple of BLOCK_SIZE in length.  This character is
-    	# used to ensure that your value is always a multiple of BLOCK_SIZE
-    	PADDING = '{'
+    	    # the character used for padding--with a block cipher such as AES, the value
+    	    # you encrypt must be a multiple of BLOCK_SIZE in length.  This character is
+    	    # used to ensure that your value is always a multiple of BLOCK_SIZE
+            PADDING = '{'
 	
 	    BLOCK_SIZE = 32
 	
