@@ -237,13 +237,18 @@ if answer.lower() == "y" or answer.lower() == "yes":
 		    if username == "": username = "root"
                     child = pexpect.spawn("ssh %s@%s -p %s" % (username,host,port))
                     password_onetime = getpass.getpass("Enter your password for the remote SSH server: ")
-                    i = child.expect(['The authenticity of host', 'password'])
+                    i = child.expect(['The authenticity of host', 'password', 'Connection refused'])
 		    if i == 0:
 	                    child.sendline("yes")
 			    child.expect("password")
 			    child.sendline(password_onetime)
-		    else:
+
+		    if i == 1:
 			child.sendline(password_onetime)
+
+		    if i ==2:
+			print ("Cannot connect to server - connection refused. Please check the port and try again.")
+			sys.exit()
 
                     # here we need to verify that we actually log in with the right password
                     i = child.expect(['Permission denied, please try again.', 'Last login:'])
