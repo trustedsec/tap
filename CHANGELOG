@@ -8,6 +8,7 @@ version 1.3
 * fixed an issue that would cause the setup to hang when uploading keys to the SSH server
 * fixed an issue that would cause password prompts when locking keystores to a password
 * added better error handling around exceptions
+* fixed proxychains from erroring out due to pexpect error
 
 ~~~~~~~~~~~~~~~
 version 1.2

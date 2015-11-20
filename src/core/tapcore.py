@@ -336,7 +336,7 @@ def ssh_run():
                 print "[*] Establishing socks proxy and tunneling 80/443 traffic"
 		try:
                 	child1 = pexpect.spawn("ssh -D %s %s@%s -p %s %s" % (socks,username,host,port, ssh_commands))
-                	i = child1.expect(['pass', 'want to continue connecting'])
+                	i = child1.expect(['pass', 'want to continue connecting', 'Last login:'])
                 	if i == 0:
                     		child1.sendline(password)
                 	if i == 1:
@@ -345,7 +345,10 @@ def ssh_run():
 	                        child1.expect("pass")
 	                        child1.sendline(password)
 
-		except:
+			if i == 2: pass
+
+		except Exception, e:
+			print e
 			print ("[!] Unable to establish a socks proxy - moving on.")
 			pass
 
