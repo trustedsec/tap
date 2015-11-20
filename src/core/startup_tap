@@ -56,7 +56,8 @@ stop)
             PID=`cat $PIDFILE`
             cd $DAEMON_PATH
         if [ -f $PIDFILE ]; then
-            kill -HUP $PID
+            kill $PID
+	    ps -ef | grep /usr/share/tap/tap.py | grep -v grep | awk '{print $2}' | xargs kill -9
             printf "%s\n" "Ok"
             rm -f $PIDFILE
         else

@@ -9,6 +9,7 @@ version 1.3
 * fixed an issue that would cause password prompts when locking keystores to a password
 * added better error handling around exceptions
 * fixed proxychains from erroring out due to pexpect error
+* updated startup script to properly kill tap.py - was only killing heartbeat which would leave stale tap.py and not restart
 
 ~~~~~~~~~~~~~~~
 version 1.2
