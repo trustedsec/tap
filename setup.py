@@ -9,7 +9,16 @@ from src.core.tapcore import ssh_keygen
 from src.core.tapcore import motd
 from src.core.tapcore import set_background
 import getpass
-import pexpect
+import sys
+try:
+	import pexpect
+except ImportError:
+	subprocess.Popen("apt-get -y install python-pexpect", shell=True).wait()
+	try:
+		import pexpect
+	except ImportError:
+		print("Install python-pexpect first, then re-run setup.")
+		sys.exit(1)
 
 def kill_tap():
     proc = subprocess.Popen("ps -au | grep tap", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
