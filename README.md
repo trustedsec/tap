@@ -105,4 +105,4 @@ what happened on the devices. All logs are saved under /var/log/messages.
 
 # Supported Operating Systems
 
-Ubuntu 14.04 LTS (should work fine on debian and other ubuntu versions)
+Ubuntu 14.04 or 16.04 LTS (should work fine on debian and other ubuntu versions)
