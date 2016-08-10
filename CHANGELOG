@@ -1,6 +1,13 @@
 # CHANGELOG for TAP
 
 ~~~~~~~~~~~~~~~
+version 1.3.2
+~~~~~~~~~~~~~~~
+
+* added auto install for nfs-common, netdiscover, tree, htop
+* added auto check for config for metasploit custom banner
+
+~~~~~~~~~~~~~~~
 version 1.3.1
 ~~~~~~~~~~~~~~~
 

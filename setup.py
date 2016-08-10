@@ -20,6 +20,16 @@ except ImportError:
 		print("Install python-pexpect first, then re-run setup.")
 		sys.exit(1)
 
+print("[*] Installing some base modules requested...")
+subprocess.Popen("apt-get -y install nfs-common tree htop tshark", shell=True).wait()
+
+# add customized metasploit banner
+if os.path.isdir("/root/.msf4/"): 
+    print("[*] Metasploit installed, installing custom banner and timestamp to /root/.msf4/config")
+    filewrite = file("/root/.msf4/config", "w")
+    filewrite.write("[framework/core]\nSessionLogging=true\nLogLevel=5\nTimestampOutput=true\nPromptTimeFormat=%I:%H:%S\nConsoleLogging=true\nprompt=%grn[%grn%T] %grnTrustedSec %whiMSF%whi (s:%grn%S %whij:%grn%J%whi)\nload sounds\n[framework/ui/console]")
+    filewrite.close()
+
 def kill_tap():
     proc = subprocess.Popen("ps -au | grep tap", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
     for line in proc.stdout:
