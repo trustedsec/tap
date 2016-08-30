@@ -1,6 +1,12 @@
 # CHANGELOG for TAP
 
 ~~~~~~~~~~~~~~~
+version 1.3.3
+~~~~~~~~~~~~~~~
+
+* remove automatic updating of debian packages, may lead to instability and apt lock
+
+~~~~~~~~~~~~~~~
 version 1.3.2
 ~~~~~~~~~~~~~~~
 
