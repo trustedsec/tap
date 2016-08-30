@@ -130,16 +130,16 @@ def update():
             else: break
 
     # if socks is up, we'll now update and go through this routine
-    while 1:
-        print "[*] Pulling the latest packages and updating for you automatically."
-        # main updates here
-        subprocess.Popen("proxychains4 apt-get update;proxychains4 apt-get upgrade -f -y --force-yes;proxychains4 apt-get autoremove -f -y --force-yes", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
-        print "[*] Grabbing distribution upgrade..."
-        # distribution upgrades
-        subprocess.Popen("proxychains4 apt-get update;proxychains4 apt-get dist-upgrade -f -y --force-yes;proxychains4 apt-get autoremove -f -y --force-yes", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
-        print "[*] Update complete, checking again in two hours."
-        # sleep two hours and try again
-        time.sleep(7200)
+    #while 1:
+    #    print "[*] Pulling the latest packages and updating for you automatically."
+    #    # main updates here
+    #    subprocess.Popen("proxychains4 apt-get update;proxychains4 apt-get upgrade -f -y --force-yes;proxychains4 apt-get autoremove -f -y --force-yes", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    #    print "[*] Grabbing distribution upgrade..."
+    #    # distribution upgrades
+    #    subprocess.Popen("proxychains4 apt-get update;proxychains4 apt-get dist-upgrade -f -y --force-yes;proxychains4 apt-get autoremove -f -y --force-yes", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    #    print "[*] Update complete, checking again in two hours."
+    #    # sleep two hours and try again
+    #    time.sleep(7200)
 
 # check proxychains config
 def proxychain():
