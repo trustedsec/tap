@@ -3,7 +3,7 @@
 TAP - Remote penetration testing platform builder.
 Written by: David Kennedy @HackingDave - from TrustedSec (https://www.trustedsec.com)
 Project page: https://github.com/trustedsec/tap
-A TrustedSec Project - Copyright 2015
+A TrustedSec Project - Copyright 2017
 Supported operating systems: Linux (Ubuntu Linux preferred)
 
 TAP is a remote penetration testing platform builder. For folks in the security industry, traveling often times becomes a burden and
