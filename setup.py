@@ -21,7 +21,7 @@ except ImportError:
 		sys.exit(1)
 
 print("[*] Installing some base modules requested...")
-subprocess.Popen("apt-get -y install nfs-common tree htop tshark", shell=True).wait()
+subprocess.Popen("apt-get -y install nfs-common tree htop tshark smbclient", shell=True).wait()
 
 # add customized metasploit banner
 if os.path.isdir("/root/.msf4/"): 
