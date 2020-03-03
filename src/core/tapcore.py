@@ -12,10 +12,10 @@ import os
 import pexpect
 from Crypto.Cipher import AES
 import base64
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 import hashlib
 import platform
-import urllib2
+import urllib.request, urllib.error, urllib.parse
 
 # here we encrypt via aes, will return encrypted string based on secret key which is random
 def encryptAES(data):
@@ -93,7 +93,7 @@ def check_debian():
     if os.path.isfile("/etc/apt/sources.list"):
 	return "Debian"
     else:
-        print "[!] Not running a Debian variant.."
+        print("[!] Not running a Debian variant..")
         return "Non-Debian"
 
 # check keepalive
@@ -103,7 +103,7 @@ def check_keepalive():
         data = fileopen.read()
         match = re.search("ServerAliveInterval", data)
         if not match:
-            print "[*] Adding Keepalive info to /etc/ssh/ssh_config..."
+            print("[*] Adding Keepalive info to /etc/ssh/ssh_config...")
             filewrite = file("/etc/ssh/ssh_config", "a")
             filewrite.write("ServerAliveInterval 15\n")
             filewrite.write("ServerAliveCountMax 4\n")
@@ -155,7 +155,7 @@ def proxychain():
 def tap_update():
     auto_update = check_config("AUTO_UPDATE=")
     if auto_update == "ON":
-        print "[*] Updating TAP now with the latest TAP codebase"
+        print("[*] Updating TAP now with the latest TAP codebase")
         updates = check_config("UPDATE_SERVER=")
         if not os.path.isdir("/usr/share/tap"):
 	    subprocess.Popen("git clone https://github.com/trustedsec/tap", shell=True).wait()
@@ -163,7 +163,7 @@ def tap_update():
         subprocess.Popen(updates, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
 
     else:
-        print "[*] AUTO_UPDATE is turned to off - not updating. Manually update by downloading: git clone https://github.com/trustedsec/tap"
+        print("[*] AUTO_UPDATE is turned to off - not updating. Manually update by downloading: git clone https://github.com/trustedsec/tap")
 
 # grab the normal path for config
 def check_config_path():
@@ -233,18 +233,18 @@ def ssh_run():
     except: pass
 
     # if we need to generate our keys
-    print "[*] Checking for stale SSH tunnels on the same port..."
+    print("[*] Checking for stale SSH tunnels on the same port...")
     proc = subprocess.Popen("netstat -antp | grep ESTABLISHED | grep %s" % (port), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True) 
     stdout_value = proc.communicate()[0]
     stdout_value = stdout_value.split(" ")
     for line in stdout_value:
         if "/ssh" in line:
-            print "[!] Stale process identified, killing it before we establish a new tunnel.."
+            print("[!] Stale process identified, killing it before we establish a new tunnel..")
             line = line.replace("/ssh", "")
             subprocess.Popen("kill " + line, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            print "[*] Process has been killed. Moving on to establishing a tunnel.."
+            print("[*] Process has been killed. Moving on to establishing a tunnel..")
 
-    print "[*] Initializing SSH tunnel back to: " + host + " on port: " + port 
+    print("[*] Initializing SSH tunnel back to: " + host + " on port: " + port) 
     subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
 
     # empty placeholder if we are using \passwords or ssh keys
@@ -266,14 +266,14 @@ def ssh_run():
             child.sendline(password)
 
     if i == 2:
-        print "[!] Warning, cannot resolve hostname or connect to host."
+        print("[!] Warning, cannot resolve hostname or connect to host.")
 
     # sleep and wait for check, make sure SSH is established
     time.sleep(40)
     while 1:
 
        # this is for SSH only
-        print "[*] Fail-safe SSH is active.. Monitoring SSH connections. - All is well."
+        print("[*] Fail-safe SSH is active.. Monitoring SSH connections. - All is well.")
         time.sleep(1)
 	try:
 	        portcheck = pexpect.spawn('ssh -p %s %s %s@%s netstat -an | egrep "tcp.*:%s.*LISTEN"' % (port, ssh_commands, username, host, localport))
@@ -309,7 +309,7 @@ def ssh_run():
 
         except:
 	
-            print "\n[*] Reinitializing SSH tunnel - it went down apparently\n"
+            print("\n[*] Reinitializing SSH tunnel - it went down apparently\n")
             subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             child = pexpect.spawn("ssh -R %s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
             i = child.expect(['pass', 'want to continue connecting', localport])
@@ -325,7 +325,7 @@ def ssh_run():
 	    if i == 2:
 		child.sendline("echo alive")
 
-            print "[*] Back up and running. Waiting and checking....."
+            print("[*] Back up and running. Waiting and checking.....")
 
         # initiate socks proxy
         socks = check_config("SOCKS_PROXY_PORT=").rstrip()
@@ -333,7 +333,7 @@ def ssh_run():
             proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             stdout_value = proc.stdout.read()
             if not "127.0.0.1:" in stdout_value:
-                print "[*] Establishing socks proxy and tunneling 80/443 traffic"
+                print("[*] Establishing socks proxy and tunneling 80/443 traffic")
 		try:
                 	child1 = pexpect.spawn("ssh -D %s %s@%s -p %s %s" % (socks,username,host,port, ssh_commands))
                 	i = child1.expect(['pass', 'want to continue connecting', 'Last login:'])
@@ -347,8 +347,8 @@ def ssh_run():
 
 			if i == 2: pass
 
-		except Exception, e:
-			print e
+		except Exception as e:
+			print(e)
 			print ("[!] Unable to establish a socks proxy - moving on.")
 			pass
 
@@ -362,12 +362,12 @@ def execute_command():
     commands = 0
     while 1:
         try:
-            print "[*] Checking for new command updates..."
+            print("[*] Checking for new command updates...")
             url = check_config("COMMAND_UPDATES=")
             if url != "":
                 try:
-                    req = urllib2.Request(url)
-                    html = urllib2.urlopen(req).read()
+                    req = urllib.request.Request(url)
+                    html = urllib.request.urlopen(req).read()
                     # if we have execute commands in URL
                     if "EXECUTE COMMANDS" in html or "EXECUTE COMMAND":
                         # here we check first to see if we need to execute or we have already
@@ -395,7 +395,7 @@ def execute_command():
 
                         # if we have no commands yet or
                         if not os.path.isfile("/tmp/tap.txt") or commands == 1:
-                            print "[*] New commands identified, sending instructions to TAP."
+                            print("[*] New commands identified, sending instructions to TAP.")
                             # write out the new commands
                             filewrite = file("/tmp/tap.txt", "w")
                             filewrite.write(html)
@@ -413,9 +413,9 @@ def execute_command():
                 except: pass
             
                 if commands == 1:
-                    print "[*] TAP instruction updates complete. Sleeping for two mintues until next check."
+                    print("[*] TAP instruction updates complete. Sleeping for two mintues until next check.")
                 else:
-                    print "[*] No updates needed. Sleeping two minutes before checking again..."
+                    print("[*] No updates needed. Sleeping two minutes before checking again...")
                 time.sleep(120)
 
             if url == "":
@@ -427,35 +427,35 @@ def execute_command():
 # create ssh-keygen stuff for authentication
 def ssh_keygen(passphrase):
   
-    print "[*] We will first generate our keys to upload to the remote server - also removing any old ones."
+    print("[*] We will first generate our keys to upload to the remote server - also removing any old ones.")
     # remove old
     if os.path.isfile("/root/.ssh/id_rsa.pub"):
-        print "[*] Removing old SSH keys..."
+        print("[*] Removing old SSH keys...")
         os.remove("/root/.ssh/id_rsa.pub")
         os.remove("/root/.ssh/id_rsa")
 
     # Enter file in which to save the key (/root/.ssh/id_rsa): 
-    print "[*] Generating the keypair.."
+    print("[*] Generating the keypair..")
     passphrase = passphrase.rstrip()
     child = pexpect.spawn("ssh-keygen -t rsa -b 4096")
     child.expect("save the")
     child.sendline("")
-    print "[*] Saving the keys in the default location.."
+    print("[*] Saving the keys in the default location..")
     child.sendline(passphrase)
     child.expect("passphrase")
     child.sendline(passphrase)
-    print "[*] Created public/private pair in /root/.ssh/ - will use certificates now."
+    print("[*] Created public/private pair in /root/.ssh/ - will use certificates now.")
     child.sendline("ssh-add")
-    print "[*] Added SSH keypairs into main system.. Ready to rock."
+    print("[*] Added SSH keypairs into main system.. Ready to rock.")
 
 # quick progress bar downloader
 def download_file(url):
     file_name = url.split('/')[-1]
-    u = urllib2.urlopen(url)
+    u = urllib.request.urlopen(url)
     f = open(file_name, 'wb')
     meta = u.info()
     file_size = int(meta.getheaders("Content-Length")[0])
-    print "Downloading: %s Bytes: %s" % (file_name, file_size)
+    print("Downloading: %s Bytes: %s" % (file_name, file_size))
 
     file_size_dl = 0
     block_sz = 8192
@@ -467,7 +467,7 @@ def download_file(url):
         f.write(buffer)
         status = r"%10d  [%3.2f%%]" % (file_size_dl, file_size_dl * 100. / file_size)
         status = status + chr(8)*(len(status)+1)
-        print status,
+        print(status, end=' ')
     f.close()
 
 ### check platform architecture
@@ -504,7 +504,7 @@ def log_everything():
             filewrite.write("# LOG EVERY COMMAND VIA SSH? YES OR NO - ALL LOGS GO TO /var/log/messages\nLOG_EVERYTHING=YES")
             filewrite.close()
         else:
-            print "[!] TAP configuration file not found. TAP will not log any commands." 
+            print("[!] TAP configuration file not found. TAP will not log any commands.") 
 
     # check log again and if we are yes then we'll log everything    
     log = check_config("LOG_EVERYTHING=")
@@ -513,13 +513,13 @@ def log_everything():
         data = file("/etc/bash.bashrc", "r").read()
         if """PROMPT_COMMAND='history -a >(logger -t "$USER[$PWD] $SSH_CONNECTION")'""" in data:
             # already added
-            print "[*] Logger already added and working.. All SSH commands are logging."
+            print("[*] Logger already added and working.. All SSH commands are logging.")
         else:
-            print "[*] Adding logging capabilities, all results will be logged in /var/log/messages"
+            print("[*] Adding logging capabilities, all results will be logged in /var/log/messages")
             filewrite = file("/etc/bash.bashrc", "a")
             filewrite.write("""PROMPT_COMMAND='history -a >(logger -t "$USER[$PWD] $SSH_CONNECTION")'""")
             filewrite.close()
-            print "[*] Now log off this current SSH connection and re-login and you will be all set."        
+            print("[*] Now log off this current SSH connection and re-login and you will be all set.")        
 
     # if we are set to no, make sure its been removed properly
     if log.lower() == "no":
@@ -527,7 +527,7 @@ def log_everything():
         fileopen = file("/etc/bash.bashrc", "r")
         data = fileopen.read()
         if """PROMPT_COMMAND='history -a >(logger -t "$USER[$PWD] $SSH_CONNECTION")'""" in data:
-            print "[*] Removing logger and turning it off..."
+            print("[*] Removing logger and turning it off...")
             filewrite = file("/etc/bash.bashrc.bak", "w")
             data = ""
             for line in fileopen:
@@ -537,11 +537,11 @@ def log_everything():
             filewrite.write(data)
             filewrite.close()
             subprocess.Popen("mv /etc/bash.bashrc.bak /etc/bash.bashrc", shell=True).wait()
-            print "[*] Finished removing logging, please exit the SSH connection and log back in to stop logging."
+            print("[*] Finished removing logging, please exit the SSH connection and log back in to stop logging.")
 
         # if it was already removed
         else:
-            print "[*] Logger is turned off, will not log any commands other than normal bash history"
+            print("[*] Logger is turned off, will not log any commands other than normal bash history")
 
 
 # update the init.d
@@ -552,26 +552,26 @@ def update_startup():
     filewrite = file("/etc/init.d/tap", "w")
     filewrite.write(config)
     filewrite.close()
-    print "[*] Triggering update-rc.d on TAP to automatic start..."
+    print("[*] Triggering update-rc.d on TAP to automatic start...")
     subprocess.Popen("chmod +x /etc/init.d/tap", shell=True).wait()
     subprocess.Popen("update-rc.d tap defaults", shell=True).wait()
 
 # ensure SSH supports VPN tunneling
 def ssh_vpn():
     if os.path.isfile("/etc/ssh/sshd_config"):
-        print "[*] Checking if SSH point-to-point is enabled in SSH config"
+        print("[*] Checking if SSH point-to-point is enabled in SSH config")
         # first we check to see if point-to-point is enabled, if not we will add it
         data = file("/etc/ssh/sshd_config", "r").read()
         # if it isn't lets add
         if not "PermitTunnel point-to-point" in data:
-            print "[-] Adding PermitTunnel point-to-point to the SSH config."
+            print("[-] Adding PermitTunnel point-to-point to the SSH config.")
             filewrite = file("/etc/ssh/sshd_config", "a")
             filewrite.write("\nPermitTunnel point-to-point\n")
             filewrite.close()
-            print "[*] Done! Use the SSH vpn script under scripts in TAP source to VPN into host."
-            print "[!] Restarting SSH real quick, you should still maintain your connection."
+            print("[*] Done! Use the SSH vpn script under scripts in TAP source to VPN into host.")
+            print("[!] Restarting SSH real quick, you should still maintain your connection.")
             subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            print "[*] We are all set and done! Boom shakalaka."
+            print("[*] We are all set and done! Boom shakalaka.")
 
 
 # set the background to tap

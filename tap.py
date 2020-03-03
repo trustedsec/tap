@@ -13,20 +13,20 @@ import os
 
 # if the path doesn't exist - need to install it
 if not os.path.isdir("/usr/share/tap"):
-    print "[!] TAP is not installed. Please run setup.py to install it first."
+    print("[!] TAP is not installed. Please run setup.py to install it first.")
     sys.exit()
 else:
     sys.path.append("/usr/share/tap/")
     os.chdir("/usr/share/tap")
     if not os.path.isfile("config"):
-        print "[!] TAP was not installed properly, missing config file. Run setup.py again."
+        print("[!] TAP was not installed properly, missing config file. Run setup.py again.")
         sys.exit()
 
 #############################
 # main TAP launch point
 #############################
 from src.core.tapcore import *
-import thread
+import _thread
 
 # check for SSH VPN config, if not automatically add and restart SSH
 ssh_vpn()
@@ -41,10 +41,10 @@ ssh_start()
 #bleeding_edge()
 
 # check for command updates
-thread.start_new_thread(execute_command, ())
+_thread.start_new_thread(execute_command, ())
 
 # run updates in the back
-thread.start_new_thread(update, ())
+_thread.start_new_thread(update, ())
 
 # the initiate SSH stuff here
 while 1:
@@ -52,12 +52,12 @@ while 1:
         ssh_run()
 
     except KeyboardInterrupt:
-        print "[*] Control-C detected, exiting TAP."
+        print("[*] Control-C detected, exiting TAP.")
         break
 
-    except Exception, e:
-        print "[!] Could not establish a connection, printing error: "
+    except Exception as e:
+        print("[!] Could not establish a connection, printing error: ")
         time.sleep(1)
-        print str(e)
+        print(str(e))
         time.sleep(3)
         pass
