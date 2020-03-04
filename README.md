@@ -3,7 +3,7 @@
 TAP - Remote penetration testing platform builder.
 Written by: David Kennedy @HackingDave - from TrustedSec (https://www.trustedsec.com)
 Project page: https://github.com/trustedsec/tap
-A TrustedSec Project - Copyright 2017
+A TrustedSec Project - Copyright 2020
 Supported operating systems: Linux (Ubuntu Linux preferred)
 
 TAP is a remote penetration testing platform builder. For folks in the security industry, traveling often times becomes a burden and
@@ -105,4 +105,4 @@ what happened on the devices. All logs are saved under /var/log/messages.
 
 # Supported Operating Systems
 
-Ubuntu 14.04 or 16.04 LTS (should work fine on debian and other ubuntu versions)
+Ubuntu 18.04 LTS (should work fine on debian and other ubuntu versions)
