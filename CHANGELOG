@@ -1,6 +1,12 @@
 # CHANGELOG for TAP
 
 ~~~~~~~~~~~~~~~
+version 2.0
+~~~~~~~~~~~~~~~
+
+* updated codebase to python3
+
+~~~~~~~~~~~~~~~
 version 1.3.3
 ~~~~~~~~~~~~~~~
 
