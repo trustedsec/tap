@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 import subprocess
 import os
 # only run this when you are in the scripts directory 
