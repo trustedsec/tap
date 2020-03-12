@@ -577,4 +577,5 @@ def ssh_vpn():
 
 # set the background to tap
 def set_background():
-    subprocess.Popen("gconftool -t string -s /desktop/gnome/background/picture_filename src/tap.jpg", shell=True).wait()
+    backgroungpath = os.path.realpath('src/tap.jpg')
+    subprocess.Popen("gsettings set org.gnome.desktop.background picture-uri file://{}".format(backgroungpath), shell=True).wait()

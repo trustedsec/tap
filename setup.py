@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 #
 # quick script for installing tap
 #
@@ -74,7 +75,7 @@ def encryptAES(data):
     cipher = AES.new(secret)
     secret = base64.b64encode(secret)
     aes = EncodeAES(cipher, data)
-    return str(aes) + "::::" + secret
+    return aes.decode("utf-8") + "::::" + secret.decode("utf-8")
 
 print (r"""
                                                                       
@@ -179,6 +180,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
         print("[*] This is the main remote SSH server you have running on the Internet that TAP will call back to.")
         print("\nWe need to figure out which method you want to use. The first method will use SSH keys\nfor authentication (preferred). This will generate a pub/priv key pair on your machine\nand automatically upload the key to the remote server. When that happens, a password\nwill not be needed then. The second method will use an actual password for authentication\non the remote server. The password is encrypted with AES but not in a secure format (decryption keys are stored locally, need to be).\n\n")
         choice1 = input("Choice 1: Use SSH keys, Choice 2: Use password (1,2)[1]: ")
+        password = ""
         if choice1 == "1" or choice1 == "":
             choice1 = "ssh_keys"
         else:
@@ -202,18 +204,18 @@ if answer.lower() == "y" or answer.lower() == "yes":
                 password = getpass.getpass("Enter password for %s: " % (username))
     
         if password != "":
-                        print("[*] Encrypting the password now..")
-                        password = encryptAES(password) 
-                        store = password.split("::::")
-                        password = store[0]
-                        key = store[1]
+            print("[*] Encrypting the password now..")
+            password = encryptAES(password) 
+            store = password.split("::::")
+            password = store[0]
+            key = store[1]
 
-                        # if the key directory isnt created, do it real quick
-                        if not os.path.isdir("/root/.tap"):
-                            os.makedirs("/root/.tap")
-                        filewrite = open("/root/.tap/store", "w")
-                        filewrite.write(key)
-                        filewrite.close()
+            # if the key directory isnt created, do it real quick
+            if not os.path.isdir("/root/.tap"):
+                os.makedirs("/root/.tap")
+            filewrite = open("/root/.tap/store", "w")
+            filewrite.write(key)
+            filewrite.close()
 
         print("[!] Warning when specifying hostname - this implies that the remote TAP device will have DNS - otherwise this will fail.")
         host = input("Enter the remote IP or hostname for SSH connect (remote external server): ")
