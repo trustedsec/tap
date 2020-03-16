@@ -554,8 +554,8 @@ def update_startup():
     filewrite.write(config)
     filewrite.close()
     print("[*] Triggering update-rc.d on TAP to automatic start...")
-    subprocess.Popen("chmod +x /etc/init.d/tap", shell=True, text=True).wait()
-    subprocess.Popen("update-rc.d tap defaults", shell=True, text=True).wait()
+    subprocess.Popen("chmod +x /etc/init.d/tap", shell=True).wait()
+    subprocess.Popen("update-rc.d tap defaults", shell=True).wait()
 
 # ensure SSH supports VPN tunneling
 def ssh_vpn():
@@ -571,7 +571,7 @@ def ssh_vpn():
             filewrite.close()
             print("[*] Done! Use the SSH vpn script under scripts in TAP source to VPN into host.")
             print("[!] Restarting SSH real quick, you should still maintain your connection.")
-            subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+            subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
             print("[*] We are all set and done! Boom shakalaka.")
 
 
