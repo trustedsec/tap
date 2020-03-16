@@ -57,7 +57,7 @@ def encryptAES(data):
     filewrite = open("/usr/share/tap/config", "w")
     filewrite.write(config)
     filewrite.close()    
-    subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
 
 # here we encrypt via aes, will return encrypted string based on secret key which is random
 def decryptAES(data):
@@ -113,8 +113,8 @@ def check_keepalive():
 # def start ssh
 def ssh_start():
     # just in case it didn't start
-    subprocess.Popen("apt-get install -y openssh-server;update-rc.d -f ssh defaults", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
-    subprocess.Popen("/etc/init.d/ssh start", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    subprocess.Popen("apt-get install -y openssh-server;update-rc.d -f ssh defaults", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
+    subprocess.Popen("/etc/init.d/ssh start", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
 
 # update every 2 hours
 def update():
@@ -123,7 +123,7 @@ def update():
     socks = check_config("SOCKS_PROXY_PORT=")
     if socks != "":
         while 1:
-            proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
             stdout_value = proc.stdout.read()
             if not "127.0.0.1:" in stdout_value:
                 # we wait a few seconds, check again.
@@ -159,9 +159,9 @@ def tap_update():
         print("[*] Updating TAP now with the latest TAP codebase")
         updates = check_config("UPDATE_SERVER=")
         if not os.path.isdir("/usr/share/tap"):
-            subprocess.Popen("git clone https://github.com/trustedsec/tap", shell=True).wait()
+            subprocess.Popen("git clone https://github.com/trustedsec/tap", shell=True, text=True).wait()
         os.chdir("/usr/share/tap")
-        subprocess.Popen(updates, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+        subprocess.Popen(updates, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
 
     else:
         print("[*] AUTO_UPDATE is turned to off - not updating. Manually update by downloading: git clone https://github.com/trustedsec/tap")
@@ -235,18 +235,18 @@ def ssh_run():
 
     # if we need to generate our keys
     print("[*] Checking for stale SSH tunnels on the same port...")
-    proc = subprocess.Popen("netstat -antp | grep ESTABLISHED | grep %s" % (port), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True) 
+    proc = subprocess.Popen("netstat -antp | grep ESTABLISHED | grep %s" % (port), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True) 
     stdout_value = proc.communicate()[0]
     stdout_value = stdout_value.split(" ")
     for line in stdout_value:
         if "/ssh" in line:
             print("[!] Stale process identified, killing it before we establish a new tunnel..")
             line = line.replace("/ssh", "")
-            subprocess.Popen("kill " + line, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            subprocess.Popen("kill " + line, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
             print("[*] Process has been killed. Moving on to establishing a tunnel..")
 
     print("[*] Initializing SSH tunnel back to: " + host + " on port: " + port) 
-    subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
 
     # empty placeholder if we are using \passwords or ssh keys
     child = pexpect.spawn("ssh -R 127.0.0.1:%s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
@@ -311,7 +311,7 @@ def ssh_run():
     except:
     
         print("\n[*] Reinitializing SSH tunnel - it went down apparently\n")
-        subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
         child = pexpect.spawn("ssh -R %s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
         i = child.expect(['pass', 'want to continue connecting', localport])
         if i == 0:
@@ -331,7 +331,7 @@ def ssh_run():
         # initiate socks proxy
         socks = check_config("SOCKS_PROXY_PORT=").rstrip()
         if socks != "":
-            proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
             stdout_value = proc.stdout.read()
             if not "127.0.0.1:" in stdout_value:
                 print("[*] Establishing socks proxy and tunneling 80/443 traffic")
@@ -408,7 +408,7 @@ def execute_command():
                                 # don't pull the execute commands line
                                 if line != "EXECUTE COMMANDS":
                                     if line != "EXECUTE COMMAND":
-                                        subprocess.Popen(line, shell=True).wait()
+                                        subprocess.Popen(line, shell=True, text=True, text=True).wait()
     
                 # passing to keep it from erroring if Internet was down
                 except: pass
@@ -554,8 +554,8 @@ def update_startup():
     filewrite.write(config)
     filewrite.close()
     print("[*] Triggering update-rc.d on TAP to automatic start...")
-    subprocess.Popen("chmod +x /etc/init.d/tap", shell=True).wait()
-    subprocess.Popen("update-rc.d tap defaults", shell=True).wait()
+    subprocess.Popen("chmod +x /etc/init.d/tap", shell=True, text=True, text=True).wait()
+    subprocess.Popen("update-rc.d tap defaults", shell=True, text=True, text=True).wait()
 
 # ensure SSH supports VPN tunneling
 def ssh_vpn():
@@ -571,11 +571,11 @@ def ssh_vpn():
             filewrite.close()
             print("[*] Done! Use the SSH vpn script under scripts in TAP source to VPN into host.")
             print("[!] Restarting SSH real quick, you should still maintain your connection.")
-            subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+            subprocess.Popen("/etc/init.d/ssh restart", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
             print("[*] We are all set and done! Boom shakalaka.")
 
 
 # set the background to tap
 def set_background():
     backgroungpath = os.path.realpath('src/tap.jpg')
-    subprocess.Popen("gsettings set org.gnome.desktop.background picture-uri file://{}".format(backgroungpath), shell=True).wait()
+    subprocess.Popen("gsettings set org.gnome.desktop.background picture-uri file://{}".format(backgroungpath), shell=True, text=True).wait()
