@@ -113,8 +113,8 @@ def check_keepalive():
 # def start ssh
 def ssh_start():
     # just in case it didn't start
-    subprocess.Popen("apt-get install -y openssh-server;update-rc.d -f ssh defaults", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
-    subprocess.Popen("/etc/init.d/ssh start", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True).wait()
+    subprocess.Popen("apt-get install -y openssh-server;update-rc.d -f ssh defaults", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    subprocess.Popen("/etc/init.d/ssh start", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
 
 # update every 2 hours
 def update():
