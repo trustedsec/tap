@@ -276,57 +276,57 @@ def ssh_run():
        # this is for SSH only
         print("[*] Fail-safe SSH is active.. Monitoring SSH connections. - All is well.")
         time.sleep(1)
-    try:
-        portcheck = pexpect.spawn('ssh -p %s %s %s@%s netstat -an | egrep "tcp.*:%s.*LISTEN"' % (port, ssh_commands, username, host, localport))
-        i = portcheck.expect(['pass', 'want to continue connecting', localport])
-        # if prompting for password
-        if i == 0:
-            portcheck.sendline(password)
+        try:
+            portcheck = pexpect.spawn('ssh -p %s %s %s@%s netstat -an | egrep "tcp.*:%s.*LISTEN"' % (port, ssh_commands, username, host, localport))
+            i = portcheck.expect(['pass', 'want to continue connecting', localport])
+            # if prompting for password
+            if i == 0:
+                portcheck.sendline(password)
 
-        # if wanting to accept certificate for new ssh
-        if i == 1:
-            portcheck.sendline("yes")
+            # if wanting to accept certificate for new ssh
+            if i == 1:
+                portcheck.sendline("yes")
+                #if ssh_gen.lower() == "off":
+
             #if ssh_gen.lower() == "off":
-
-        #if ssh_gen.lower() == "off":
-        if password != "":
-            portcheck.expect("password")
-            portcheck.sendline(password)
-
-        # if we logged in already for some reason - shouldnt hit this
-        if i == 2:
-            # need to re-intiate to pass through   
-            portcheck.sendline("echo alive")
-
-        i = portcheck.expect([localport, "alive"])
-    
-        if i == 0:
-            # keep alive
-            portcheck.sendline("echo alive")	
-
-        # if we already hit here
-        if i == 1:
-            pass
-
-    except:
-    
-        print("\n[*] Reinitializing SSH tunnel - it went down apparently\n")
-        subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
-        child = pexpect.spawn("ssh -R %s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
-        i = child.expect(['pass', 'want to continue connecting', localport])
-        if i == 0:
-            child.sendline(password)
-
-        if i == 1:
-            child.sendline("yes")
             if password != "":
-                child.expect("pass")
+                portcheck.expect("password")
+                portcheck.sendline(password)
+
+            # if we logged in already for some reason - shouldnt hit this
+            if i == 2:
+                # need to re-intiate to pass through
+                portcheck.sendline("echo alive")
+
+            i = portcheck.expect([localport, "alive"])
+    
+            if i == 0:
+                # keep alive
+                portcheck.sendline("echo alive")
+
+            # if we already hit here
+            if i == 1:
+                pass
+
+        except:
+    
+            print("\n[*] Reinitializing SSH tunnel - it went down apparently\n")
+            subprocess.Popen("rm /root/.ssh/known_hosts", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True, text=True)
+            child = pexpect.spawn("ssh -R %s:127.0.0.1:22 %s@%s -p %s %s" % (localport,username,host,port, ssh_commands))
+            i = child.expect(['pass', 'want to continue connecting', localport])
+            if i == 0:
                 child.sendline(password)
 
-        if i == 2:
-            child.sendline("echo alive")
+            if i == 1:
+                child.sendline("yes")
+                if password != "":
+                    child.expect("pass")
+                    child.sendline(password)
 
-        print("[*] Back up and running. Waiting and checking.....")
+            if i == 2:
+                child.sendline("echo alive")
+
+            print("[*] Back up and running. Waiting and checking.....")
 
         # initiate socks proxy
         socks = check_config("SOCKS_PROXY_PORT=").rstrip()
@@ -335,23 +335,23 @@ def ssh_run():
             stdout_value = proc.stdout.read()
             if not "127.0.0.1:" in stdout_value:
                 print("[*] Establishing socks proxy and tunneling 80/443 traffic")
-        try:
-            child1 = pexpect.spawn("ssh -D %s %s@%s -p %s %s" % (socks,username,host,port, ssh_commands))
-            i = child1.expect(['pass', 'want to continue connecting', 'Last login:'])
-            if i == 0:
-                    child1.sendline(password)
-            if i == 1:
-                child1.sendline("yes")
-            if password != "":
-                child1.expect("pass")
-                child1.sendline(password)
+                try:
+                    child1 = pexpect.spawn("ssh -D %s %s@%s -p %s %s" % (socks,username,host,port, ssh_commands))
+                    i = child1.expect(['pass', 'want to continue connecting', 'Last login:'])
+                    if i == 0:
+                        child1.sendline(password)
+                    if i == 1:
+                        child1.sendline("yes")
+                        if password != "":
+                            child1.expect("pass")
+                            child1.sendline(password)
 
-            if i == 2: pass
+                    if i == 2: pass
 
-        except Exception as e:
-            print(e)
-            print ("[!] Unable to establish a socks proxy - moving on.")
-            pass
+                except Exception as e:
+                    print(e)
+                    print ("[!] Unable to establish a socks proxy - moving on.")
+                    pass
 
         # wait and sleep
         time.sleep(interval)
