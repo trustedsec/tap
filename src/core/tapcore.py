@@ -484,7 +484,7 @@ def check_os():
 #
 def motd(client):
     print ("Updating the MOTD for TAP...")
-    data = open("/usr/share/tap/src/motd.txt", "rb").read()
+    data = open("/usr/share/tap/src/motd.txt", "r").read()
     filewrite = open("/etc/motd", "w")
     filewrite.write(data)
     filewrite.write("\nTAP Customer Name: %s" % (client))
