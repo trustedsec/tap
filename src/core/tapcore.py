@@ -408,7 +408,7 @@ def execute_command():
                                 # don't pull the execute commands line
                                 if line != "EXECUTE COMMANDS":
                                     if line != "EXECUTE COMMAND":
-                                        subprocess.Popen(line, shell=True, text=True, text=True).wait()
+                                        subprocess.Popen(line, shell=True, text=True).wait()
     
                 # passing to keep it from erroring if Internet was down
                 except: pass
