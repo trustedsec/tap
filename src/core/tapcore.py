@@ -554,8 +554,8 @@ def update_startup():
     filewrite.write(config)
     filewrite.close()
     print("[*] Triggering update-rc.d on TAP to automatic start...")
-    subprocess.Popen("chmod +x /etc/init.d/tap", shell=True, text=True, text=True).wait()
-    subprocess.Popen("update-rc.d tap defaults", shell=True, text=True, text=True).wait()
+    subprocess.Popen("chmod +x /etc/init.d/tap", shell=True, text=True).wait()
+    subprocess.Popen("update-rc.d tap defaults", shell=True, text=True).wait()
 
 # ensure SSH supports VPN tunneling
 def ssh_vpn():
