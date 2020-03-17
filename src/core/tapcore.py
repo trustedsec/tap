@@ -332,7 +332,7 @@ def ssh_run():
         socks = check_config("SOCKS_PROXY_PORT=").rstrip()
         if socks != "":
             proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            stdout_value = proc.stdout.read()
+            stdout_value = proc.stdout.read().decode('utf-8')
             if not "127.0.0.1:" in stdout_value:
                 print("[*] Establishing socks proxy and tunneling 80/443 traffic")
                 try:
