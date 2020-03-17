@@ -124,7 +124,7 @@ def update():
     if socks != "":
         while 1:
             proc = subprocess.Popen('netstat -an | egrep "tcp.*:%s.*LISTEN"' % (socks), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
-            stdout_value = proc.stdout.read()
+            stdout_value = proc.stdout.read().decode('utf8')
             if not "127.0.0.1:" in stdout_value:
                 # we wait a few seconds, check again.
                 time.sleep(20)
