@@ -153,7 +153,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
         # install git and update everything
         print("[*] Updating everything beforehand...")
         subprocess.Popen("apt-get update && apt-get --force-yes -y upgrade && apt-get --force-yes -y dist-upgrade", shell=True).wait()
-        subprocess.Popen("apt-get --force-yes -y install git python-crypto python-pexpect openssh-server", shell=True).wait()
+        subprocess.Popen("apt-get --force-yes -y install git python-crypto python-pexpect openssh-server net-tools", shell=True).wait()
         from Crypto.Cipher import AES
         choice = input("Do you want to keep TAP updated? (requires internet) [y/n]: ")
         if choice == "y" or choice == "yes":
@@ -288,89 +288,89 @@ if answer.lower() == "y" or answer.lower() == "yes":
                     else:
                         print("[*] Successfully logged into the system, good to go from here!")
 
-                    if i == 1:
-                        print("[*] Successfully logged into the system, good to go from here!")
+                if i == 1:
+                    print("[*] Successfully logged into the system, good to go from here!")
 
-                    # next we grab the hostname so we can enter it in the authorized keys for a description
-                    fileopen = open("/etc/hostname", "r")
-                    hostname = fileopen.read()
-                    # add a space
-                    child.sendline("echo '' >> ~/.ssh/authorized_keys")
-                    # comment code for authorized list
-                    child.sendline("echo '# TAP box for hostname: %s' >> ~/.ssh/authorized_keys" % (hostname))
-                    # actual ssh key
-                    child.sendline("echo '%s' >> ~/.ssh/authorized_keys" % (pub))
-                    print("[*] Key for %s added to the external box: %s" % (hostname, host))
+                # next we grab the hostname so we can enter it in the authorized keys for a description
+                fileopen = open("/etc/hostname", "r")
+                hostname = fileopen.read()
+                # add a space
+                child.sendline("echo '' >> ~/.ssh/authorized_keys")
+                # comment code for authorized list
+                child.sendline("echo '# TAP box for hostname: %s' >> ~/.ssh/authorized_keys" % (hostname))
+                # actual ssh key
+                child.sendline("echo '%s' >> ~/.ssh/authorized_keys" % (pub))
+                print("[*] Key for %s added to the external box: %s" % (hostname, host))
                    
-                else:
-                    ssh_keys ="OFF"
+            else:
+                ssh_keys ="OFF"
 
-                # do you want to log everything
-                print("TAP has the ability to log every command used via SSH. This is useful for customers who want log files of the pentest. All logs are saved in /var/log/messages")
-                log_everything = input("Do you want to log everything? yes or no [yes] ")
-                if log_everything == "": log_everything = "yes"
-                log_everything = log_everything.upper()
+            # do you want to log everything
+            print("TAP has the ability to log every command used via SSH. This is useful for customers who want log files of the pentest. All logs are saved in /var/log/messages")
+            log_everything = input("Do you want to log everything? yes or no [yes] ")
+            if log_everything == "": log_everything = "yes"
+            log_everything = log_everything.upper()
 
-                # write out the config file
-                filewrite = open("/usr/share/tap/config", "w")
-                filewrite.write("# tap config options\n\n")
-                filewrite.write("# The username for the ssh connection\nUSERNAME=%s\n# The password for the reverse ssh connection\nPASSWORD=%s\n# The reverse ssh ipaddr or hostname\nIPADDR=%s\n# The port for the reverse connect\nPORT=%s\n" % (username, password,host,port))
-                filewrite.write("# SSH check is in seconds\nSSH_CHECK_INTERVAL=60\n")
-                filewrite.write("# The local SSH port on the reverse SSH host\nLOCAL_PORT=%s\n" % (localport))
-                filewrite.write("# Where to pull updates from\nUPDATE_SERVER=%s\n" % (updates))
-                filewrite.write("# URL for command updates - ENSURE THAT THE FIRST LINE OF TEXT FILE HAS: 'EXECUTE COMMANDS' or it will not execute anything!\nCOMMAND_UPDATES=%s\n" % (commands))
-                filewrite.write("# SPECIFY IF TAP WILL AUTOMATICALLY UPDATE OR NOT\nAUTO_UPDATE=%s\n" % (AUTO_UPDATE))
-                filewrite.write("# SPECIFY IF SSH KEYS ARE IN USE OR NOT\nSSH_KEYS=%s\n" % (ssh_keys))
-                filewrite.write("# LOG EVERY COMMAND VIA SSH? YES OR NO - ALL LOGS GO TO /var/log/messages\nLOG_EVERYTHING=%s\n" % (log_everything))
-                filewrite.write("# THIS IS USED TO TUNNEL SOCKS HTTP TRAFFIC FOR LINUX UPDATES\nSOCKS_PROXY_PORT=%s\n" % (socks))
-                filewrite.close()
+            # write out the config file
+            filewrite = open("/usr/share/tap/config", "w")
+            filewrite.write("# tap config options\n\n")
+            filewrite.write("# The username for the ssh connection\nUSERNAME=%s\n# The password for the reverse ssh connection\nPASSWORD=%s\n# The reverse ssh ipaddr or hostname\nIPADDR=%s\n# The port for the reverse connect\nPORT=%s\n" % (username, password,host,port))
+            filewrite.write("# SSH check is in seconds\nSSH_CHECK_INTERVAL=60\n")
+            filewrite.write("# The local SSH port on the reverse SSH host\nLOCAL_PORT=%s\n" % (localport))
+            filewrite.write("# Where to pull updates from\nUPDATE_SERVER=%s\n" % (updates))
+            filewrite.write("# URL for command updates - ENSURE THAT THE FIRST LINE OF TEXT FILE HAS: 'EXECUTE COMMANDS' or it will not execute anything!\nCOMMAND_UPDATES=%s\n" % (commands))
+            filewrite.write("# SPECIFY IF TAP WILL AUTOMATICALLY UPDATE OR NOT\nAUTO_UPDATE=%s\n" % (AUTO_UPDATE))
+            filewrite.write("# SPECIFY IF SSH KEYS ARE IN USE OR NOT\nSSH_KEYS=%s\n" % (ssh_keys))
+            filewrite.write("# LOG EVERY COMMAND VIA SSH? YES OR NO - ALL LOGS GO TO /var/log/messages\nLOG_EVERYTHING=%s\n" % (log_everything))
+            filewrite.write("# THIS IS USED TO TUNNEL SOCKS HTTP TRAFFIC FOR LINUX UPDATES\nSOCKS_PROXY_PORT=%s\n" % (socks))
+            filewrite.close()
 
-                # set the background
-                # background()
+            # set the background
+            # background()
         
-                # update motd
-                client = input("What customer are you deploying this to: ")
-                motd(client)
+            # update motd
+            client = input("What customer are you deploying this to: ")
+            motd(client)
 
-                # configuring permissions  
-                subprocess.Popen("chmod +x /usr/share/tap/tap.py;chmod +x /usr/share/tap/src/core/heartbeat.py", shell=True).wait()
+            # configuring permissions
+            subprocess.Popen("chmod +x /usr/share/tap/tap.py;chmod +x /usr/share/tap/src/core/heartbeat.py", shell=True).wait()
 
-                # ensure proxychains is installed
-                print("[*] Installing proxychains-ng for SOCKS5 proxy support.")
-                subprocess.Popen("git clone https://github.com/rofl0r/proxychains-ng proxy;cd proxy;./configure && make && make install;cd ..;rm -rf proxy", shell=True).wait()
+            # ensure proxychains is installed
+            print("[*] Installing proxychains-ng for SOCKS5 proxy support.")
+            subprocess.Popen("git clone https://github.com/rofl0r/proxychains-ng proxy;cd proxy;./configure && make && make install;cd ..;rm -rf proxy", shell=True).wait()
 
-                # enable root login
-                print("[*] Enabling SSH-Server and allow remote root login.. Please ensure and test this ahead of time.")
-                data = open("/etc/ssh/sshd_config", "r").read()
-                filewrite = open("/etc/ssh/sshd_config", "w")
-                data = data.replace("PermitRootLogin without-password", "PermitRootLogin yes")
-                filewrite.write(data)
-                filewrite.close()
-                print("[*] Restarting the SSH service after changes.")
-                subprocess.Popen("service ssh restart", shell=True).wait()
-                print("[*] Installation complete. Edit /usr/share/tap/config in order to config tap to your liking..")
-                print("[*] Pulling the PenTesters Framework - when installation finishes go to /pentest/ptf, ./ptf, and install all (use modules/install_update_all")
-                if not os.path.isdir("/pentest/"): os.makedirs("/pentest")
-                if not os.path.isdir("/pentest/ptf"):
-                    subprocess.Popen("cd /pentest;git clone https://github.com/trustedsec/ptf ptf", shell=True).wait()
+            # enable root login
+            print("[*] Enabling SSH-Server and allow remote root login.. Please ensure and test this ahead of time.")
+            data = open("/etc/ssh/sshd_config", "r").read()
+            filewrite = open("/etc/ssh/sshd_config", "w")
+            data = data.replace("PermitRootLogin without-password", "PermitRootLogin yes")
+            filewrite.write(data)
+            filewrite.close()
+            print("[*] Restarting the SSH service after changes.")
+            subprocess.Popen("service ssh restart", shell=True).wait()
+            print("[*] Installation complete. Edit /usr/share/tap/config in order to config tap to your liking..")
+            print("[*] Pulling the PenTesters Framework - when installation finishes go to /pentest/ptf, ./ptf, and install all (use modules/install_update_all")
+            if not os.path.isdir("/pentest/"): os.makedirs("/pentest")
+            if not os.path.isdir("/pentest/ptf"):
+                subprocess.Popen("cd /pentest;git clone https://github.com/trustedsec/ptf ptf", shell=True).wait()
                 
-                # start TAP, yes or no?
-                choice = input("Would you like to start TAP now? [y/n]: ")
-                if choice == "yes" or choice == "y":
-                    subprocess.Popen("/etc/init.d/tap start", shell=True).wait()
+            # start TAP, yes or no?
+            choice = input("Would you like to start TAP now? [y/n]: ")
+            if choice == "yes" or choice == "y":
+                subprocess.Popen("/etc/init.d/tap start", shell=True).wait()
 
-                print("[*] All finished, now run the following command to install all of your tools: ") 
-                ptf = input("[-] Do you want to install all PTF modules now? [yes][no]: ")
-                if ptf == "yes" or ptf == "y":
-                    print("[*] Installing PTF modules/install_update_all...")
-                    os.chdir("/pentest/ptf")
-                    child = pexpect.spawn("python ptf")
-                    child.expect("ptf")
-                    child.sendline("use modules/install_update_all")
-                    child.interact()
+            print("[*] All finished, now run the following command to install all of your tools: ")
+            ptf = input("[-] Do you want to install all PTF modules now? [yes][no]: ")
+            if ptf == "yes" or ptf == "y":
+                print("[*] Installing PTF modules/install_update_all...")
+                os.chdir("/pentest/ptf")
+                child = pexpect.spawn("python ptf")
+                child.expect("ptf")
+                child.sendline("use modules/install_update_all")
+                child.interact()
                 
-                else:
-                    print("[*] cd /pentest/ptf, ./ptf, use modules/install_update_all")
+            else:
+                print("[*] cd /pentest/ptf, ./ptf, use modules/install_update_all")
 
 # uninstall tap
 if answer == "uninstall":
