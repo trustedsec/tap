@@ -6,18 +6,22 @@ Project page: https://github.com/trustedsec/tap \
 A TrustedSec Project - Copyright 2020 \
 Supported operating systems: Linux (Ubuntu Linux preferred)
 
+## What is the TAP?
+
 TAP is a remote penetration testing platform builder. For folks in the security industry, traveling often times becomes a burden and adds a ton of cost to the customer. TAP was designed to make the deployment of these boxes super simple and create a self-healing and stable platform to deploy remote penetration testing platforms. Essentially the concept is simple, you pre-configure a brand new box and run the TAP setup file. This will install a service on Linux that will be configured the way you want. What it will do is establish a reverse SSH tunnel back to a machine thats exposed on the Internet for you. From there you can access the box locally from the server it connects back to. TAP automatically detects when an SSH connection has gone stale and will automatically rebuild it for you. 
 
 It also has a number of other options, for example, in the event you lose SSH, it'll connect out to a text file and execute commands for you. Also updates itself continiously as well as ensure that you are running the latest packages for Ubuntu Linux (if that is your OS).
 
 ## TAP Installation
-
+```
 python setup.py - This will install TAP.
+```
 
 In order to uninstall TAP:
 
+```
 python setup.py - This will uninstall TAP.
-
+```
 ## TAP Instructions
 
 When setting up TAP, the questions you may have is the REMOTE ssh server, this would be an external box you have with SSH exposed. This would be your box you want the TAP machine to connect back to, the machine you have on the Internet waiting for connections. It is not recommended to use root as this is a security oversight. Use a normal user to establish the SSH tunnel. Right now its password only although lateron we will be adding support for SSH keys. The password is stored using AES however the cipher key storage is insecure at the moment. Someone with maintained access to the box could grab the cipher key and decrypt the password in the config with enough time and persistence. Will fix this in a later release date.
