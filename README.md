@@ -1,10 +1,10 @@
-# The TrustedSec Attack Platform (TAP)\
+# The TrustedSec Attack Platform (TAP)
 
 TAP - Remote penetration testing platform builder.\
 Written by: David Kennedy @HackingDave - from TrustedSec (https://www.trustedsec.com)\
-Project page: https://github.com/trustedsec/tap\
-A TrustedSec Project - Copyright 2020\
-Supported operating systems: Linux (Ubuntu Linux preferred)\
+Project page: https://github.com/trustedsec/tap \
+A TrustedSec Project - Copyright 2020 \
+Supported operating systems: Linux (Ubuntu Linux preferred) \
 
 TAP is a remote penetration testing platform builder. For folks in the security industry, traveling often times becomes a burden and
 adds a ton of cost to the customer. TAP was designed to make the deployment of these boxes super simple and create a self-healing and
