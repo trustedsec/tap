@@ -10,7 +10,7 @@ TAP is a remote penetration testing platform builder. For folks in the security 
 
 It also has a number of other options, for example, in the event you lose SSH, it'll connect out to a text file and execute commands for you. Also updates itself continiously as well as ensure that you are running the latest packages for Ubuntu Linux (if that is your OS).
 
-#In order to install TAP:
+## TAP Installation
 
 python setup.py - This will install TAP.
 
@@ -18,7 +18,7 @@ In order to uninstall TAP:
 
 python setup.py - This will uninstall TAP.
 
-#Instructions:
+## TAP Instructions
 
 When setting up TAP, the questions you may have is the REMOTE ssh server, this would be an external box you have with SSH exposed. This would be your box you want the TAP machine to connect back to, the machine you have on the Internet waiting for connections. It is not recommended to use root as this is a security oversight. Use a normal user to establish the SSH tunnel. Right now its password only although lateron we will be adding support for SSH keys. The password is stored using AES however the cipher key storage is insecure at the moment. Someone with maintained access to the box could grab the cipher key and decrypt the password in the config with enough time and persistence. Will fix this in a later release date.
 
@@ -46,7 +46,9 @@ doing large traffic volumes such as port scans, vulnerability scans, etc. The be
 
 There's two ways to handle a VPN, first is through the method below with SSHuttle. You can also use a transparent VPN that was created by Geoff Walton at TrustedSec that is located in the under the scripts folder. This will create a TAP interface and VPN you into the system through SSH. With SSHuttle, things like port scans do not work properly, would highly recommend the ssh-tunnel script.
 
-# Simple SSHUTTLE Tunneling Script
+## SSHUTTLE Tunneling Script
+
+SSHUTTLE is a tool that allows you to use SSH as a method for a transparent proxy VPN. You can use this script to communicate with the remote TAP device and tunnel your system over the proxy for a full VPN. This allows you to do testing through your own device, and not leverage the TAP device itself. 
 
 ```import os 
 import subprocess 
@@ -68,18 +70,18 @@ subprocess.Popen("ssh -f %s@%s -L %s:localhost:%s -N" % (reverse4, reverse1, rev
 subprocess.Popen("sshuttle --dns -vr %s@localhost:%s 0/0" % (reverse4,reverse3), shell=True).wait()
 ```
 
-# Using Proxy Chains
+## Using Proxy Chains
 
 TAP uses proxychains4 (proxychains-ng) to tunnel all of your http/https traffic through SSH to your remote box. This 
 helps with content/egress filtering so you can ensure you always have everything up-to-date. In order to use proxychains, 
 just type proxychains4 <command_you_want_to_use> - TAP updates automatically use this.
 
-# Logging
+## Logging
 
 TAP during the setup process will prompt you to see if you want to log all commands executed on the system. If you do, 
 all commands that are entered on the system will be logged so that you can provide to the customer or keep records of 
 what happened on the devices. All logs are saved under /var/log/messages.
 
-# Supported Operating Systems
+## Supported Operating Systems
 
 Ubuntu 18.04 LTS (should work fine on debian and other ubuntu versions)
