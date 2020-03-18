@@ -47,7 +47,7 @@ doing large traffic volumes such as port scans, vulnerability scans, etc. The be
 There's two ways to handle a VPN, first is through the method below with SSHuttle. You can also use a transparent VPN that was created by Geoff Walton at TrustedSec that is located in the under the scripts folder. This will create a TAP interface and VPN you into the system through SSH. With SSHuttle, things like port scans do not work properly, would highly recommend the ssh-tunnel script.
 
 # Simple SSHUTTLE script written by Dave Kennedy @HackingDave
-import os \
+```import os \
 import subprocess \
 import time
 
@@ -65,6 +65,7 @@ print)"Triggering tunnel now...") \
 time.sleep(2)
 subprocess.Popen("ssh -f %s@%s -L %s:localhost:%s -N" % (reverse4, reverse1, reverse3, reverse2), shell=True).wait()
 subprocess.Popen("sshuttle --dns -vr %s@localhost:%s 0/0" % (reverse4,reverse3), shell=True).wait()
+```
 
 # Using Proxy Chains
 
