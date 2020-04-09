@@ -201,9 +201,9 @@ def ssh_run():
     # fix permissions just in case
     subprocess.Popen("chmod 400 ~/.ssh/id_rsa;chmod 400 ~/.ssh/id_rsa.pub", shell=True).wait()
     # username for the remote system
-    username = check_config("USERNAME=")
+    username = check_config("USERNAME=").encode('utf-8')
     # password for the remote system
-    password = check_config("PASSWORD=")
+    password = check_config("PASSWORD=").encode('utf-8')
     # decrypt the AES password
     password = decryptAES(password).rstrip()
     # port we connect back to for reverse SSH
