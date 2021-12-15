@@ -79,7 +79,7 @@ def decryptAES(data):
     
         # one-liners to encrypt/encode and decrypt/decode a string
         # encrypt with AES, encode with base64
-        DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
+        DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING.encode('utf-8'))
         fileopen = open("/root/.tap/store", "r")
         key = fileopen.read()
         secret = base64.b64decode(key)
