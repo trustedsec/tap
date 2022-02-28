@@ -11,7 +11,16 @@ import subprocess
 import time
 import os
 import pexpect
-from Crypto.Cipher import AES
+try:
+    from Crypto.Cipher import AES
+except ImportError:
+    subprocess.Popen("apt-get -y install python3-crypto", shell=True).wait()
+    try:
+        from Crypto.Cipher import AES
+    except ImportError:
+        print("Install python3-crypto first, then re-run setup.")
+        sys.exit(1)
+
 import base64
 import urllib.request, urllib.error, urllib.parse
 import hashlib

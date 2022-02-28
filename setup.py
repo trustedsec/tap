@@ -14,11 +14,11 @@ import sys
 try:
     import pexpect
 except ImportError:
-    subprocess.Popen("apt-get -y install python-pexpect", shell=True).wait()
+    subprocess.Popen("apt-get -y install python3-pexpect", shell=True).wait()
     try:
         import pexpect
     except ImportError:
-        print("Install python-pexpect first, then re-run setup.")
+        print("Install python3-pexpect first, then re-run setup.")
         sys.exit(1)
 
 print("[*] Installing some base modules requested...")
@@ -153,7 +153,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
         # install git and update everything
         print("[*] Updating everything beforehand...")
         subprocess.Popen("apt-get update && apt-get --force-yes -y upgrade && apt-get --force-yes -y dist-upgrade", shell=True).wait()
-        subprocess.Popen("apt-get --force-yes -y install git python-crypto python-pexpect openssh-server net-tools", shell=True).wait()
+        subprocess.Popen("apt-get --force-yes -y install git python3-crypto python3-pexpect openssh-server net-tools", shell=True).wait()
         from Crypto.Cipher import AES
         choice = input("Do you want to keep TAP updated? (requires internet) [y/n]: ")
         if choice == "y" or choice == "yes":
