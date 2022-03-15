@@ -11,6 +11,8 @@ from src.core.tapcore import motd
 from src.core.tapcore import set_background
 import getpass
 import sys
+import re
+import stat
 try:
     import pexpect
 except ImportError:
@@ -188,10 +190,36 @@ if answer.lower() == "y" or answer.lower() == "yes":
 
         # generate ssh_key gen from setcore
         if choice1 == "ssh_keys":
-            print("[*] SSH Key generation was selected, we will begin the process now.")
-            #password = getpass.getpass("Enter the passphrase for your new SSH key: ")
-            password = ""
-            ssh_keygen(password)
+            keys_q = input("Choice 1: Use existing SSH keys, Choice 2: Create new SSH keys(1,2)[2]: ")
+            if keys_q == "1":
+                print("[*] We will first remove any old ones.")
+                if not os.path.isdir("/root/.ssh"):
+                    os.mkdir("/root/.ssh", 700)
+                os.chmod("/root/.ssh", stat.S_IRWXU )
+                # remove old
+                if os.path.isfile("/root/.ssh/id_rsa.pub"):
+                    print("[*] Removing old SSH keys...")
+                    os.remove("/root/.ssh/id_rsa.pub")
+                    os.remove("/root/.ssh/id_rsa")
+                print("[*] Copy and Paste the SSH Private Key.\n> "),
+                with open("/root/.ssh/id_rsa", "w") as fd:
+                    while True:
+                        tmp_input = input("")
+                        fd.write( tmp_input + '\n' )
+                        if re.match( '-----END .* PRIVATE KEY-----', tmp_input.strip() ): break
+                os.chmod("/root/.ssh/id_rsa", stat.S_IRUSR|stat.S_IWUSR )
+                print("[*] Copy and Paste the SSH Public Key followed by a blank line.\n> "),
+                with open("/root/.ssh/id_rsa.pub", "w") as fd:
+                    while True:
+                        tmp_input = input("")
+                        if tmp_input.strip() == '': break
+                        fd.write( tmp_input + '\n' )
+                os.chmod("/root/.ssh/id_rsa.pub", stat.S_IRUSR|stat.S_IWUSR )
+            else:
+                print("[*] SSH Key generation was selected, we will begin the process now.")
+                #password = getpass.getpass("Enter the passphrase for your new SSH key: ")
+                password = ""
+                ssh_keygen(password)
 
         # if we are just using straight passwords
         if choice1 == "password":
@@ -241,66 +269,78 @@ if answer.lower() == "y" or answer.lower() == "yes":
             # determine if SSH keys are in use 
             if choice1 == "ssh_keys":
                 ssh_keys = "ON"
-                print("[*] We need to upload the public key to the remote server, enter the password for the remote server (once) to upload when prompted.")
-                # clearing known hosts
-                if os.path.isfile("/root/.ssh/known_hosts"):
-                    print("[!] Removing old known_hosts files..")                    
-                    os.remove("/root/.ssh/known_hosts")
-
-                # pull public key into memory
-
-                fileopen = open("/root/.ssh/id_rsa.pub", "r")
-                pub = fileopen.read()
-                # spawn pexpect to add key
-                print("[*] Spawning SSH connection and modifying authorized hosts.")
-                print("[*] Below will ask for a username and password, this is for the REMOTE server exposed on the Internet. This is a one time thing where the TAP device will upload and add the SSH keys to the remote system in order to handle SSH authentication. This is the PW for your external server on the Internet.")
-                username = input("Enter the username for the REMOTE account to log into the EXTERNAL server: ")
-                if username == "": username = "root"
-                child = pexpect.spawn("ssh %s@%s -p %s" % (username,host,port))
-                password_onetime = getpass.getpass("Enter your password for the remote SSH server: ")
-                i = child.expect(['The authenticity of host', 'password', 'Connection refused'])
-                if i == 0:
-                    child.sendline("yes")
-                    child.expect("password")
-                    child.sendline(password_onetime)
-
-                if i == 1:
-                    child.sendline(password_onetime)
-
-                if i ==2:
-                    print ("Cannot connect to server - connection refused. Please check the port and try again.")
-                    sys.exit()
-
-                # here we need to verify that we actually log in with the right password
-                i = child.expect(['Permission denied, please try again.', 'Last login:'])
-                if i == 0:
-                    print("[!] ERROR!!!! You typed in the wrong password.")
-                    password_onetime = getpass.getpass("Lets try this again. Enter your SSH password: ")
-                    child.sendline(password_onetime)
-                    # second time fat fingering, no dice bro
-                    i = child.expect(['Permission denied, please try again.'])
-                    if i == 0:
-                        print("[!] Sorry boss, still denied. Figure out the password and run setup again.")
-                        print("[!] Exiting TAP setup...")
-                        # exit TAP here
+                installed = input("[*] Has the SSH Public Key already been installed on the remote server (y/N) [N]?")
+                if installed.lower() == 'y':
+                    username = input("Enter the username for the REMOTE account to log into the EXTERNAL server: ")
+                    if username == "": username = "root"
+                    child = pexpect.spawn("ssh %s@%s -p %s" % (username,host,port))
+                    i = child.expect(['The authenticity of host', 'password', 'Connection refused', 'Permission denied, please try again.', 'Last login:'])
+                    if i < 4:
+                        print("[*] Error: Could not connect to remote server. Either the SSH Key is incorrectly configured or no SSH Key has been configured")
                         sys.exit()
-                    # successfully logged in
-                    else:
+                    if i == 4:
+                        print("[*] Successfully logged into the system, good to go from here!")
+                else:
+                    print("[*] We need to upload the public key to the remote server, enter the password for the remote server (once) to upload when prompted.")
+                    # clearing known hosts
+                    if os.path.isfile("/root/.ssh/known_hosts"):
+                        print("[!] Removing old known_hosts files..")                    
+                        os.remove("/root/.ssh/known_hosts")
+
+                    # pull public key into memory
+
+                    fileopen = open("/root/.ssh/id_rsa.pub", "r")
+                    pub = fileopen.read()
+                    # spawn pexpect to add key
+                    print("[*] Spawning SSH connection and modifying authorized hosts.")
+                    print("[*] Below will ask for a username and password, this is for the REMOTE server exposed on the Internet. This is a one time thing where the TAP device will upload and add the SSH keys to the remote system in order to handle SSH authentication. This is the PW for your external server on the Internet.")
+                    username = input("Enter the username for the REMOTE account to log into the EXTERNAL server: ")
+                    if username == "": username = "root"
+                    child = pexpect.spawn("ssh %s@%s -p %s" % (username,host,port))
+                    password_onetime = getpass.getpass("Enter your password for the remote SSH server: ")
+                    i = child.expect(['The authenticity of host', 'password', 'Connection refused'])
+                    if i == 0:
+                        child.sendline("yes")
+                        child.expect("password")
+                        child.sendline(password_onetime)
+
+                    if i == 1:
+                        child.sendline(password_onetime)
+
+                    if i ==2:
+                        print ("Cannot connect to server - connection refused. Please check the port and try again.")
+                        sys.exit()
+
+                    # here we need to verify that we actually log in with the right password
+                    i = child.expect(['Permission denied, please try again.', 'Last login:'])
+                    if i == 0:
+                        print("[!] ERROR!!!! You typed in the wrong password.")
+                        password_onetime = getpass.getpass("Lets try this again. Enter your SSH password: ")
+                        child.sendline(password_onetime)
+                        # second time fat fingering, no dice bro
+                        i = child.expect(['Permission denied, please try again.'])
+                        if i == 0:
+                            print("[!] Sorry boss, still denied. Figure out the password and run setup again.")
+                            print("[!] Exiting TAP setup...")
+                            # exit TAP here
+                            sys.exit()
+                        # successfully logged in
+                        else:
+                            print("[*] Successfully logged into the system, good to go from here!")
+
+                    if i == 1:
                         print("[*] Successfully logged into the system, good to go from here!")
 
-                if i == 1:
-                    print("[*] Successfully logged into the system, good to go from here!")
-
-                # next we grab the hostname so we can enter it in the authorized keys for a description
-                fileopen = open("/etc/hostname", "r")
-                hostname = fileopen.read()
-                # add a space
-                child.sendline("echo '' >> ~/.ssh/authorized_keys")
-                # comment code for authorized list
-                child.sendline("echo '# TAP box for hostname: %s' >> ~/.ssh/authorized_keys" % (hostname))
-                # actual ssh key
-                child.sendline("echo '%s' >> ~/.ssh/authorized_keys" % (pub))
-                print("[*] Key for %s added to the external box: %s" % (hostname, host))
+                    # next we grab the hostname so we can enter it in the authorized keys for a description
+                    fileopen = open("/etc/hostname", "r")
+                    hostname = fileopen.read()
+                    # add a space
+                    child.sendline("echo '' >> ~/.ssh/authorized_keys")
+                    # comment code for authorized list
+                    child.sendline("echo '# TAP box for hostname: %s' >> ~/.ssh/authorized_keys" % (hostname))
+                    # actual ssh key
+                    child.sendline("echo '%s' >> ~/.ssh/authorized_keys" % (pub))
+                    print("[*] Key for %s added to the external box: %s" % (hostname, host))
                    
             else:
                 ssh_keys ="OFF"
@@ -380,4 +420,3 @@ if answer == "uninstall":
     print("[*] Checking to see if tap is currently running...")
     kill_tap()
     print("[*] TAP has been uninstalled. Manually kill the process if it is still running.")
-
