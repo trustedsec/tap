@@ -155,7 +155,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
         # install git and update everything
         print("[*] Updating everything beforehand...")
         subprocess.Popen("apt-get update && apt-get --force-yes -y upgrade && apt-get --force-yes -y dist-upgrade", shell=True).wait()
-        subprocess.Popen("apt-get --force-yes -y install git python3-crypto python3-pexpect openssh-server net-tools", shell=True).wait()
+        subprocess.Popen("apt-get --force-yes -y install git python3-pycryptodome python3-pexpect openssh-server net-tools", shell=True).wait()
         from Crypto.Cipher import AES
         choice = input("Do you want to keep TAP updated? (requires internet) [y/n]: ")
         if choice == "y" or choice == "yes":
@@ -346,7 +346,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
                 ssh_keys ="OFF"
 
             # do you want to log everything
-            print("TAP has the ability to log every command used via SSH. This is useful for customers who want log files of the pentest. All logs are saved in /var/log/messages")
+            print("TAP has the ability to log every command used via SSH. This is useful for clients who want log files of the pentest. All logs are saved in /var/log/messages")
             log_everything = input("Do you want to log everything? yes or no [yes] ")
             if log_everything == "": log_everything = "yes"
             log_everything = log_everything.upper()
@@ -369,7 +369,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
             # background()
         
             # update motd
-            client = input("What customer are you deploying this to: ")
+            client = input("What client are you deploying this to: ")
             motd(client)
 
             # configuring permissions
