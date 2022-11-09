@@ -14,11 +14,11 @@ import pexpect
 try:
     from Crypto.Cipher import AES
 except ImportError:
-    subprocess.Popen("apt-get -y install python3-crypto", shell=True).wait()
+    subprocess.Popen("apt-get -y install python3-pycryptodome", shell=True).wait()
     try:
         from Crypto.Cipher import AES
     except ImportError:
-        print("Install python3-crypto first, then re-run setup.")
+        print("Install python3-pycryptodome first, then re-run setup.")
         sys.exit(1)
 
 import base64
@@ -496,7 +496,7 @@ def motd(client):
     data = open("/usr/share/tap/src/motd.txt", "r").read()
     filewrite = open("/etc/motd", "w")
     filewrite.write(data)
-    filewrite.write("\nTAP Customer Name: %s" % (client))
+    filewrite.write("\nTAP Client Name: %s" % (client))
     filewrite.close()
     print ("Finished...")
 
