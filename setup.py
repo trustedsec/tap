@@ -23,15 +23,8 @@ except ImportError:
         print("Install python3-pexpect first, then re-run setup.")
         sys.exit(1)
 
-print("[*] Installing some base modules requested...")
-subprocess.Popen("apt-get -y install nfs-common tree htop tshark smbclient", shell=True).wait()
-
-# add customized metasploit banner
-if os.path.isdir("/root/.msf4/"): 
-    print("[*] Metasploit installed, installing custom banner and timestamp to /root/.msf4/config")
-    filewrite = open("/root/.msf4/config", "w")
-    filewrite.write("[framework/core]\nSessionLogging=true\nLogLevel=5\nTimestampOutput=true\nPromptTimeFormat=%I:%H:%S\nConsoleLogging=true\nprompt=%grn[%grn%T] %grnTrustedSec %whiMSF%whi (s:%grn%S %whij:%grn%J%whi)\nload sounds\n[framework/ui/console]")
-    filewrite.close()
+print("[*] Installing some base packages...")
+subprocess.Popen("apt-get -y install htop dbus-x11", shell=True).wait()
 
 def kill_tap():
     proc = subprocess.Popen("ps -au | grep tap", stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -165,7 +158,7 @@ if answer.lower() == "y" or answer.lower() == "yes":
                     shutil.rmtree('/usr/share/tap')
             if not os.path.isdir("/usr/share/tap"):
                 os.makedirs("/usr/share/tap")
-            subprocess.Popen("cd /usr/share/;git clone https://github.com/trustedsec/tap tap/", shell=True).wait()
+            subprocess.Popen("git clone https://github.com/trustedsec/tap.git /usr/share/tap/", shell=True).wait()
             print("[*] Finished. If you want to update tap go to /usr/share/tap and type 'git pull'")
             AUTO_UPDATE="ON"
         else:
@@ -389,28 +382,28 @@ if answer.lower() == "y" or answer.lower() == "yes":
             print("[*] Restarting the SSH service after changes.")
             subprocess.Popen("service ssh restart", shell=True).wait()
             print("[*] Installation complete. Edit /usr/share/tap/config in order to config tap to your liking..")
-            print("[*] Pulling the PenTesters Framework - when installation finishes go to /pentest/ptf, ./ptf, and install all (use modules/install_update_all")
-            if not os.path.isdir("/pentest/"): os.makedirs("/pentest")
-            if not os.path.isdir("/pentest/ptf"):
-                subprocess.Popen("cd /pentest;git clone https://github.com/trustedsec/ptf ptf", shell=True).wait()
                 
             # start TAP, yes or no?
             choice = input("Would you like to start TAP now? [y/n]: ")
             if choice == "yes" or choice == "y":
                 subprocess.Popen("/etc/init.d/tap start", shell=True).wait()
 
-            print("[*] All finished, now run the following command to install all of your tools: ")
-            ptf = input("[-] Do you want to install all PTF modules now? [yes][no]: ")
+            # prompt for ptf install
+            print("[*] PTF Install: ")
+            ptf = input("[-] Do you want to install PTF and all modules now? [yes][no]: ")
             if ptf == "yes" or ptf == "y":
+                print("[*] Pulling the PenTesters Framework and installing all modules (use modules/install_update_all")
+                if not os.path.isdir("/pentest/"): os.makedirs("/pentest")
+                if not os.path.isdir("/pentest/ptf"):
+                    subprocess.Popen("git clone https://github.com/trustedsec/ptf.git /pentest/ptf", shell=True).wait()
                 print("[*] Installing PTF modules/install_update_all...")
                 os.chdir("/pentest/ptf")
                 child = pexpect.spawn("python ptf")
                 child.expect("ptf")
                 child.sendline("use modules/install_update_all")
                 child.interact()
-                
             else:
-                print("[*] cd /pentest/ptf, ./ptf, use modules/install_update_all")
+                print("[*] Clone the PTF repo at: https://github.com/trustedsec/ptf.git later to install your tools")
 
 # uninstall tap
 if answer == "uninstall":
